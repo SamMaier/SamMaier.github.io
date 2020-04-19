@@ -13,20 +13,63 @@
   <!-- Top row area-->
   <div class="row">
     <div class="surroundingbox">
-      <div onclick="test(this)" class="bigsquare"></div>
+      <div onclick="strikethrough(this)" class="bigsquare"></div>
     </div>
-    <div class="surroundingbox greyshadow">
-      <div onclick="test(this)" class="square">1</div>
-      <div class="bonusbox">↻</div>
+    <div class="round surroundingbox greyshadow">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">1</div>
+      <div style="font-style: normal" class="bonusbox">↻</div>
+    </div>
+    <div class="round surroundingbox greyshadow">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">2</div>
+      <div class="bonusbox">+1</div>
+    </div>
+    <div class="round surroundingbox greyshadow">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">3</div>
+      <div style="font-style: normal" class="bonusbox">↻</div>
+    </div>
+    <div class="round surroundingbox greyshadow">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">4</div>
+      <div style="display: flex; color: white; margin: 0.15rem auto;">
+        <div class="bonusbox smallstrikethrough" style="width: 0.8rem; height: 0.8rem; line-height: 0.8rem; "></div>|
+        <div class="bonusbox" style="width: 0.8rem; height: 0.8rem; line-height: 0.8rem;">6</div>
+      </div>
+    </div>
+    <div class="round surroundingbox">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">5</div>
+      <div style="margin: auto; font-style: normal; font-size: 1rem">👪</div>
+    </div>
+    <div class="round surroundingbox">
+      <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">6</div>
+      <div style="margin: auto; font-style: normal; font-size: 1rem">👫</div>
     </div>
   </div>
   <!-- Refresh row area-->
   <div class="row">
-    <div class="surroundingbox"><div onclick="test(this)" class="bigsquare"></div></div>
+    <div class="surroundingbox"><div class="bigsquare"></div></div>
+    <div class="surroundingbox greyshadow">
+      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto 0.2rem" class="bonusbox">↻</div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+    </div>
   </div>
   <!-- +1 row area-->
   <div class="row">
-    <div class="surroundingbox"><div onclick="test(this)" class="bigsquare"></div></div>
+    <div class="surroundingbox"><div class="bigsquare"></div></div>
+    <div class="surroundingbox greyshadow">
+      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto 0.2rem" class="bonusbox">+1</div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+      <div class="circle" onclick="circle(this)"></div>
+    </div>
   </div>
   <!-- Middle area-->
   <div class="row">

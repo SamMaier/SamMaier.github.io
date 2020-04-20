@@ -13,32 +13,32 @@
   <!-- Top row area-->
   <div class="row">
     <div class="surroundingbox">
-      <div onclick="strikethrough(this)" class="bigsquare"></div>
+      <div class="bigsquare"></div>
     </div>
-    <div class="round surroundingbox greyshadow">
+    <div class="column surroundingbox greyshadow">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">1</div>
       <div style="font-style: normal" class="bonusbox">↻</div>
     </div>
-    <div class="round surroundingbox greyshadow">
+    <div class="column surroundingbox greyshadow">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">2</div>
       <div class="bonusbox">+1</div>
     </div>
-    <div class="round surroundingbox greyshadow">
+    <div class="column surroundingbox greyshadow">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">3</div>
       <div style="font-style: normal" class="bonusbox">↻</div>
     </div>
-    <div class="round surroundingbox greyshadow">
+    <div class="column surroundingbox greyshadow">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">4</div>
       <div style="display: flex; color: white; margin: 0.15rem auto;">
         <div class="bonusbox smallstrikethrough" style="width: 0.8rem; height: 0.8rem; line-height: 0.8rem; "></div>|
         <div class="bonusbox" style="width: 0.8rem; height: 0.8rem; line-height: 0.8rem;">6</div>
       </div>
     </div>
-    <div class="round surroundingbox">
+    <div class="column surroundingbox">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">5</div>
       <div style="margin: auto; font-style: normal; font-size: 1rem">👪</div>
     </div>
-    <div class="round surroundingbox">
+    <div class="column surroundingbox">
       <div onclick="strikethrough(this)" style="margin: auto 0.3rem" class="square">6</div>
       <div style="margin: auto; font-style: normal; font-size: 1rem">👫</div>
     </div>
@@ -46,8 +46,8 @@
   <!-- Refresh row area-->
   <div class="row">
     <div class="surroundingbox"><div class="bigsquare"></div></div>
-    <div class="surroundingbox greyshadow">
-      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto 0.2rem" class="bonusbox">↻</div>
+    <div style="justify-content: space-between; width: 100%" class="surroundingbox greyshadow">
+      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto" class="bonusbox">↻</div>
       <div class="circle" onclick="circle(this)"></div>
       <div class="circle" onclick="circle(this)"></div>
       <div class="circle" onclick="circle(this)"></div>
@@ -60,8 +60,8 @@
   <!-- +1 row area-->
   <div class="row">
     <div class="surroundingbox"><div class="bigsquare"></div></div>
-    <div class="surroundingbox greyshadow">
-      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto 0.2rem" class="bonusbox">+1</div>
+    <div style="justify-content: space-between; width: 100%" class="surroundingbox greyshadow">
+      <div style="font-style: normal; height: 2rem; width: 2rem; line-height: 2rem; font-size: 1.4rem; border-radius: 0.4rem; margin: auto" class="bonusbox">+1</div>
       <div class="circle" onclick="circle(this)"></div>
       <div class="circle" onclick="circle(this)"></div>
       <div class="circle" onclick="circle(this)"></div>
@@ -73,12 +73,198 @@
   </div>
   <!-- Middle area-->
   <div class="row">
+  <!-- Yellow area-->
+  <div style="width: 50%;" class="surroundingbox yellowshadow">
+    <div class="row">
+      <div onclick="strikethrough(this)" class="square">3</div>
+      <div onclick="strikethrough(this)" class="square">6</div>
+      <div onclick="strikethrough(this)" class="square">5</div>
+      <div class="square strikethrough"></div>
+      <div class="bonusbox smallstrikethrough" style="background-color: #00f" ></div>
+    </div>
+    <div class="row">
+      <div onclick="strikethrough(this)" class="square">2</div>
+      <div onclick="strikethrough(this)" class="square">1</div>
+      <div class="square strikethrough"></div>
+      <div onclick="strikethrough(this)" class="square">5</div>
+      <div class="bonusbox" style="background-color: #f70">4</div>
+    </div>
+    <div class="row">
+      <div onclick="strikethrough(this)" class="square">1</div>
+      <div class="square strikethrough"></div>
+      <div onclick="strikethrough(this)" class="square">2</div>
+      <div onclick="strikethrough(this)" class="square">4</div>
+      <div class="bonusbox smallstrikethrough" style="background-color: #0a0" ></div>
+    </div>
+    <div class="row">
+      <div class="square strikethrough"></div>
+      <div onclick="strikethrough(this)" class="square">3</div>
+      <div onclick="strikethrough(this)" class="square">4</div>
+      <div onclick="strikethrough(this)" class="square">6</div>
+      <div class="points fox"><div class="pointsnumber">0</div></div>
+    </div>
+    <div class="row">
+      <div class="points yellowpoints wider"><div class="pointsnumber">10</div></div>
+      <div class="points yellowpoints wider"><div class="pointsnumber">14</div></div>
+      <div class="points yellowpoints wider"><div class="pointsnumber">16</div></div>
+      <div class="points yellowpoints wider"><div class="pointsnumber">20</div></div>
+      <div class="bonusbox">+1</div>
+    </div>
+  </div>
+  <!-- Blue area-->
+  <div style="width: 50%;" class="surroundingbox blueshadow">
+    <div class="row">
+      <div class="tinypoints bluepoints"><div class="pointsnumber">1</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">2</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">4</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">7</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">11</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">16</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">22</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">29</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">37</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">46</div></div>
+      <div class="tinypoints bluepoints"><div class="pointsnumber">56</div></div>
+    </div>
+    <div style="color: white" class="row">
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">1</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">2</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">3</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">4</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">5</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">6</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">7</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">8</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">9</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">10</div></div>
+      <div style="font-size: 0.65rem" class="tinypoints"><div class="pointsnumber">11</div></div>
+    </div>
+    <div style="color: #00f" class="row">
+      <div style="background-color: transparent" class="square"></div>
+      <div onclick="strikethrough(this)" class="square">2</div>
+      <div onclick="strikethrough(this)" class="square">3</div>
+      <div onclick="strikethrough(this)" class="square">4</div>
+      <div class="bonusbox" style="background-color: #f70">5</div>
+    </div>
+    <div style="color: #00f" class="row">
+      <div onclick="strikethrough(this)" class="square">5</div>
+      <div onclick="strikethrough(this)" class="square">6</div>
+      <div onclick="strikethrough(this)" class="square">7</div>
+      <div onclick="strikethrough(this)" class="square">8</div>
+      <div class="bonusbox smallstrikethrough yellowstrike" ></div>
+    </div>
+    <div style="color: #00f" class="row">
+      <div onclick="strikethrough(this)" class="square">9</div>
+      <div onclick="strikethrough(this)" class="square">10</div>
+      <div onclick="strikethrough(this)" class="square">11</div>
+      <div onclick="strikethrough(this)" class="square">12</div>
+      <div class="points fox"><div class="pointsnumber">0</div></div>
+    </div>
+    <div class="row">
+      <div style="font-style: normal" class="bonusbox">↻</div>
+      <div class="bonusbox smallstrikethrough" style="background-color: #0a0" ></div>
+      <div class="bonusbox" style="background-color: #409">6</div>
+      <div class="bonusbox">+1</div>
+      <div style="width: 1.8rem; background-color:transparent"></div>
+    </div>
+  </div>
   </div>
   <!-- Green area-->
   <div class="row">
+  <div class="surroundingbox greenshadow">
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">1</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥1</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">3</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥2</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">6</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥3</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">10</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥4</div>
+      <div class="bonusbox belo">+1</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">15</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥5</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">21</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥1</div>
+      <div class="bonusbox smallstrikethrough belo" style="background-color: #00f" ></div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">28</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥2</div>
+      <div class="points fox foxbelo"><div class="pointsnumber">0</div></div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">36</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥3</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">45</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥4</div>
+      <div class="bonusbox belo" style="background-color: #409" >6</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">55</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥5</div>
+      <div style="font-style: normal" class="bonusbox belo">↻</div>
+    </div>
+    <div class="column">
+      <div class="points greenpoints wider"><div class="pointsnumber">66</div></div>
+      <div onclick="strikethrough(this)" class="square gobelow">≥6</div>
+    </div>
+  </div>
   </div>
   <!-- Orange area-->
   <div class="row">
+  <div class="surroundingbox orangeshadow">
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+      <div style="font-style: normal" class="bonusbox below">↻</div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow">x2</div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+      <div class="bonusbox smallstrikethrough yellowstrike below" ></div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+      <div class="bonusbox below">+1</div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow">x2</div>
+      <div class="points fox foxbelow"><div class="pointsnumber">0</div></div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow">x2</div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow"></div>
+      <div class="bonusbox below" style="background-color: #409" >6</div>
+    </div>
+    <div class="column">
+      <div onclick="strikethrough(this)" class="square gobelow">x3</div>
+    </div>
+  </div>
   </div>
   <!-- Purple area-->
   <div class="row">

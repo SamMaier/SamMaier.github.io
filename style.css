@@ -15,12 +15,92 @@ div {
   height: 1.1rem;
   line-height: 1.1rem;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: white;
   border-color: white;
   border-style: solid;
   border-width: 0.08rem;
   border-radius: 0.3rem;
+}
+
+.tinypoints {
+  margin: auto;
+  width: 0.7rem;
+  height: 0.7rem;
+  position: relative;
+  text-align: center;
+  background-clip: padding-box;
+  border-style: solid;
+  border-color: transparent;
+}
+.tinypoints::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.7rem;
+  height: 0.7rem;
+  transform: rotate(45deg);
+}
+.points {
+  margin: auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  position: relative;
+  text-align: center;
+  background-clip: padding-box;
+  border-style: solid;
+  border-color: transparent;
+  border-left-width: 0.07rem;
+  border-right-width: 0.07rem;
+}
+.points::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: rotate(45deg);
+}
+.pointsnumber {
+  z-index: 999;
+  position: relative;
+  color: inherit;
+}
+
+.fox {
+  background-color: #f60;
+  color: white;
+}
+.fox::before {
+  background-color: #f60;
+}
+
+.yellowpoints {
+  background-color: #ff0;
+  color: black;
+}
+.yellowpoints::before {
+  background-color: #ff0;
+}
+.greenpoints {
+  background-color: #0a0;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+.greenpoints::before {
+  background-color: #0a0;
+}
+.bluepoints {
+  background-color: #00f;
+  color: white;
+  font-size: 0.65rem;
+  border-style: solid;
+  border-color: transparent;
+}
+.bluepoints::before {
+  background-color: #00f;
 }
 
 .bigsquare {
@@ -39,7 +119,7 @@ div {
   font-size: 1.4rem;
   border-radius: 0.4rem;
   text-align: center;
-  margin: 0.1rem;
+  margin: auto;
   user-select: none;
 }
 
@@ -51,11 +131,7 @@ div {
   border-color: white;
   border-width: 0.2rem;
   border-style: solid;
-  margin:auto 0.19rem auto 0.19rem;
-}
-
-.greyshadow {
-  background-image: radial-gradient(#888888 20%, #666666 40%, #444444 60%, #222222 80%, #111111 90%);
+  margin:auto;
 }
 
 .surroundingbox {
@@ -68,8 +144,34 @@ div {
   flex-direction: row;
 }
 
-.round {
+.greyshadow {
+  background-image: radial-gradient(#888888 20%, #666666 40%, #444444 60%, #222222 80%, #111111 90%);
+}
+.greenshadow {
+  background-image: radial-gradient(#373 20%, #363 40%, #353 60%, #242 80%, #131 90%);
+  color: #0a0;
+  width: 100%;
+}
+.yellowshadow {
+  background-image: radial-gradient(#995 20%, #884 40%, #663 60%, #441 80%, #330 90%);
+  display: flex;
   flex-direction: column;
+}
+.blueshadow {
+  background-image: radial-gradient(#229 20%, #228 40%, #116 60%, #114 80%, #113 90%);
+  display: flex;
+  flex-direction: column;
+}
+.orangeshadow {
+  background-image: radial-gradient(#b60 20%, #950 40%, #730 60%, #520 80%, #311 90%);
+  color: #f70;
+  width: 100%;
+}
+
+.column {
+  margin: auto;
+  flex-direction: column;
+  position: relative;
 }
 
 .scorecard {
@@ -130,4 +232,44 @@ div {
 .smallstrikethrough::after {
   transform: rotate(-50deg);
   height: 0.2rem;
+}
+
+.yellowstrike {
+  background-color: #ff0;
+}
+.yellowstrike::before,
+.yellowstrike::after {
+  background-color: black;
+}
+.wider {
+  border-left-width: 0.45rem;
+  border-right-width: 0.45rem;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.belo {
+  position: absolute;
+  top: 3.4rem;
+  left: 0.36rem;
+}
+.foxbelo {
+  position: absolute;
+  top: 3.35rem;
+  left: 0.4rem;
+}
+.below {
+  position: absolute;
+  top: 1.6rem;
+  left: 0.36rem;
+}
+.foxbelow {
+  position: absolute;
+  top: 1.55rem;
+  left: 0.4rem;
+}
+
+.gobelow {
+  margin-top: 0.1rem;
+  margin-bottom: 1rem;
 }

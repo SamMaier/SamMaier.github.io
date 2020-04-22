@@ -83,7 +83,56 @@ div {
 .fox::before {
   background-color: #f60;
 }
+.foxo {
+  background-color: #f60;
+  color: white;
+}
+.foxo::before {
+  background-color: #f60;
+}
+.foxy {
+  background-color: #ff0;
+  color: black;
+}
+.foxy::before {
+  background-color: #ff0;
+}
+.foxb {
+  background-color: #00f;
+  color: white;
+}
+.foxb::before {
+  background-color: #00f;
+}
+.foxg {
+  background-color: #0a0;
+  color: white;
+}
+.foxg::before {
+  background-color: #0a0;
+}
+.foxp {
+  background-color: #409;
+  color: white;
+}
+.foxp::before {
+  background-color: #409;
+}
 
+.whitepoints {
+  background-color: #fff;
+  margin: 1rem auto;
+  width: 3rem;
+  height: 3rem;
+  color: black;
+  line-height: 3rem;
+  font-size: 2rem;
+}
+.whitepoints::before {
+  background-color: #fff;
+  width: 3rem;
+  height: 3rem;
+}
 .yellowpoints {
   background-color: #ff0;
   color: black;
@@ -92,11 +141,11 @@ div {
   background-color: #ff0;
 }
 .orangepoints {
-  background-color: #f70;
+  background-color: #f60;
   color: white;
 }
 .orangepoints::before {
-  background-color: #f70;
+  background-color: #f60;
 }
 .greenpoints {
   background-color: #0a0;

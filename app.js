@@ -3,27 +3,112 @@ var multiplier = 1;
 var numFoxes = 0;
 
 function calcYellow() {
-  total = 29
+  let total = 0
+  strikemap = {}
+  for (let i = 1; i <= 12; i++) {
+    id = "y" + i
+    ele = document.getElementById(id)
+    let list = ele.classList
+    if (list.contains("strikethrough")) {
+      strikemap[i] = true
+    } else {
+      strikemap[i] = false
+    }
+  }
+  if (strikemap[1] && strikemap[4] && strikemap[7]) {
+    total += 10
+  }
+  if (strikemap[2] && strikemap[5] && strikemap[10]) {
+    total += 14
+  }
+  if (strikemap[3] && strikemap[8] && strikemap[11]) {
+    total += 16
+  }
+  if (strikemap[6] && strikemap[9] && strikemap[12]) {
+    total += 20
+  }
+  if (strikemap[10] && strikemap[11] && strikemap[12]) {
+    numFoxes++
+  }
+  document.getElementById("yellowpoints").innerHTML = total.toString()
   return total
 }
 function calcBlue() {
-  total = 40
+  let total = 0
+  map = { 0:0, 1:1, 2:2, 3:4, 4:7, 5:11, 6:16, 7:22, 8:29, 9:37, 10:46, 11:56 }
+  hasFox = true
+  for (let i = 2; i <= 12; i++) {
+    id = "b" + i
+    ele = document.getElementById(id)
+    let list = ele.classList
+    if (list.contains("strikethrough")) {
+      total += 1
+    } else {
+      if (i >= 9) {
+        hasFox = false
+      }
+    }
+  }
+  if (hasFox) {
+    numFoxes ++
+  }
+  total = map[total]
+  document.getElementById("bluepoints").innerHTML = total.toString()
   return total
 }
 function calcGreen() {
-  total = 33
+  let total = 0
+  map = { 0:0, 1:1, 2:3, 3:6, 4:10, 5:15, 6:21, 7:28, 8:36, 9:45, 10:55, 11:66 }
+  for (let i = 1; i < 12; i++) {
+    id = "g" + i
+    ele = document.getElementById(id)
+    let list = ele.classList
+    if (list.contains("strikethrough")) {
+      total += 1
+      if (i === 7) {
+        numFoxes++
+      }
+    }
+  }
+  total = map[total]
+  document.getElementById("greenpoints").innerHTML = total.toString()
   return total
 }
 function calcOrange() {
-  total = 115
+  let total = 0
+  for (let i = 1; i < 12; i++) {
+    id = "o" + i
+    ele = document.getElementById(id)
+    val = Number(ele.innerHTML)
+    if (Number.isInteger(val)) {
+      total += val
+      if (val > 0 && i === 8) {
+        numFoxes++
+      }
+    }
+  }
+  document.getElementById("orangepoints").innerHTML = total.toString()
   return total
 }
 function calcPurple() {
-  total = 65
+  let total = 0
+  for (let i = 1; i <= 11; i++) {
+    id = "p" + i
+    ele = document.getElementById(id)
+    val = Number(ele.innerHTML)
+    if (Number.isInteger(val)) {
+      total += val
+      if (val > 0 && i === 7) {
+        numFoxes++
+      }
+    }
+  }
+  document.getElementById("purplepoints").innerHTML = total.toString()
   return total
 }
 
 function updateScore() {
+  numFoxes = 0
   let yellow = calcYellow()
   let blue = calcBlue()
   let green = calcGreen()
@@ -77,6 +162,7 @@ function numberpicked(element) {
       selected.innerHTML = ""
     }
   }
+  turnOffModal()
 }
 
 function strikethrough(element) {
@@ -120,7 +206,6 @@ function numberbox(element, multipl = 1) {
     let prevNum = Number(element.id.substring(1))-1
     if (prevNum) {
       prevVal = Number(document.getElementById("p"+prevNum).innerHTML)
-      console.log(prevVal)
       if (prevVal > 0 && prevVal !== 6){
         for (let i = 1; i <=prevVal; i++) {
           el = document.getElementById("sq" + i)

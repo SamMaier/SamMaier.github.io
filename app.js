@@ -223,14 +223,17 @@ function numberbox(element, multipl = 1) {
 }
 
 function hideScore(element) {
+  hideScoreImpl(element)
+  hideScoreImpl(document.getElementById("totalScore"))
+  hideScoreImpl(document.getElementById("bluepoints"))
+}
+
+function hideScoreImpl(element) {
   let list = element.classList
   if (list.contains("hiddenscore")) {
     list.remove("hiddenscore")
   } else {
     list.add("hiddenscore")
-  }
-  if (element.id !== "totalScore") {
-    hideScore(document.getElementById("totalScore"))
   }
 }
 

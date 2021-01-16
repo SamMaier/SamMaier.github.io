@@ -283,8 +283,8 @@ div {
   justify-content: center;
 }
 
-.strikethrough::before,
-.strikethrough::after {
+.strikethrough::before {
+  transform: rotate(50deg);
   position: absolute;
   content: '';
   width: 100%;
@@ -292,12 +292,13 @@ div {
   background-color: black;
 }
 
-.strikethrough::before {
-  transform: rotate(50deg);
-}
-
 .strikethrough::after {
   transform: rotate(-50deg);
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 0.2rem;
+  background-color: black;
 }
 
 .smallstrikethrough {
@@ -307,28 +308,30 @@ div {
   justify-content: center;
 }
 
-.smallstrikethrough::before,
-.smallstrikethrough::after {
+.smallstrikethrough::before {
+  transform: rotate(60deg);
+  height: 0.15rem;
   position: absolute;
   content: '';
   width: 100%;
   background-color: white;
 }
 
-.smallstrikethrough::before {
-  transform: rotate(60deg);
-  height: 0.15rem;
-}
-
 .smallstrikethrough::after {
   transform: rotate(-50deg);
   height: 0.2rem;
+  position: absolute;
+  content: '';
+  width: 100%;
+  background-color: white;
 }
 
 .yellowstrike {
   background-color: #ff0;
 }
-.yellowstrike::before,
+.yellowstrike::before {
+  background-color: black;
+}
 .yellowstrike::after {
   background-color: black;
 }

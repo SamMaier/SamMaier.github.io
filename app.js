@@ -171,7 +171,13 @@ function strikethrough(element) {
     list.remove("strikethrough")
   } else {
     list.add("strikethrough")
-  } 
+  }
+  if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
+    // Hack for Safari since it can't draw the ::after CSS pseudoelement for some reason.
+    element.style.display = 'none';
+    element.offsetHeight;
+    element.style.display = '';
+  }
   updateScore();
 }
 

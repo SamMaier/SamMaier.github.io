@@ -376,3 +376,7 @@ div {
   flex-direction: column;
   background-color: rgba(0,0,0,0.5);
 }
+
+.hiddenscore {
+  font-size: 0.001rem;
+}

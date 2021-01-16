@@ -216,6 +216,18 @@ function numberbox(element, multipl = 1) {
   }
 }
 
+function hideScore(element) {
+  let list = element.classList
+  if (list.contains("hiddenscore")) {
+    list.remove("hiddenscore")
+  } else {
+    list.add("hiddenscore")
+  }
+  if (element.id !== "totalScore") {
+    hideScore(document.getElementById("totalScore"))
+  }
+}
+
 function turnOffModal() {
   document.getElementById("mainmodal").style.display = "none"
   updateScore()

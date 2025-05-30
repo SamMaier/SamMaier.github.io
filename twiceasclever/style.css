@@ -1,0 +1,398 @@
+body {
+  background-color:#000000;
+  margin: 0;
+}
+div {
+  vertical-align: top;
+  font-family: 'Marck Script', cursive;
+  font-weight: bold;
+  touch-action: manipulation;
+}
+
+.bonusbox {
+  background-color: black;
+  margin: auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  line-height: 1.1rem;
+  text-align: center;
+  font-size: 1rem;
+  color: white;
+  border-color: white;
+  border-style: solid;
+  border-width: 0.08rem;
+  border-radius: 0.3rem;
+  user-select: none;
+}
+
+.blackbonus {
+  font-family: sans-serif;
+}
+
+.tinypoints {
+  margin: auto;
+  width: 0.7rem;
+  height: 0.7rem;
+  line-height: 0.7rem;
+  position: relative;
+  text-align: center;
+  background-clip: padding-box;
+  border-style: solid;
+  border-color: transparent;
+}
+.tinypoints::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.7rem;
+  height: 0.7rem;
+  transform: rotate(45deg);
+}
+.points {
+  margin: auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  position: relative;
+  text-align: center;
+  background-clip: padding-box;
+  border-style: solid;
+  border-color: transparent;
+  border-left-width: 0.07rem;
+  border-right-width: 0.07rem;
+}
+.points::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: rotate(45deg);
+}
+.pointsnumber {
+  z-index: 999;
+  position: relative;
+  color: inherit;
+}
+
+.fox {
+  background-color: #f60;
+  color: white;
+}
+.fox::before {
+  background-color: #f60;
+}
+.foxo {
+  background-color: #f60;
+  color: white;
+}
+.foxo::before {
+  background-color: #f60;
+}
+.foxy {
+  background-color: #ff0;
+  color: black;
+}
+.foxy::before {
+  background-color: #ff0;
+}
+.foxb {
+  background-color: #00f;
+  color: white;
+}
+.foxb::before {
+  background-color: #00f;
+}
+.foxg {
+  background-color: #0a0;
+  color: white;
+}
+.foxg::before {
+  background-color: #0a0;
+}
+/* .foxp was purple, now pink, but fox class is generic orange by default. This specific color might be unused if not referenced. */
+
+.whitepoints {
+  background-color: #fff;
+  margin: 1rem auto;
+  width: 3rem;
+  height: 3rem;
+  color: black;
+  line-height: 3rem;
+  font-size: 2rem;
+}
+.whitepoints::before {
+  background-color: #fff;
+  width: 3rem;
+  height: 3rem;
+}
+.greypoints { /* New class for grey score */
+  background-color: #9E9E9E; 
+  color: black;
+}
+.greypoints::before {
+  background-color: #9E9E9E;
+}
+.yellowpoints {
+  background-color: #ff0;
+  color: black;
+}
+.yellowpoints::before {
+  background-color: #ff0;
+}
+.bluepoints {
+  background-color: #00f;
+  color: white;
+  font-size: 0.8rem; /* This was specific to bluepoints, keeping it */
+  border-style: solid;
+  border-color: transparent;
+}
+.bluepoints::before {
+  background-color: #00f;
+}
+.greenpoints {
+  background-color: #0a0;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+.greenpoints::before {
+  background-color: #0a0;
+}
+.pinkpoints { /* New class for pink score */
+  background-color: #E91E63; 
+  color: white;
+}
+.pinkpoints::before {
+  background-color: #E91E63;
+}
+
+
+.bigsquare {
+  background-color: white;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-size: 3.2rem;
+  line-height: 3.2rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  margin: 0.2rem;
+  user-select: none;
+}
+
+.square {
+  background-color: white;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  font-size: 1.6rem;
+  border-radius: 0.4rem;
+  text-align: center;
+  margin: auto;
+  user-select: none;
+}
+
+.circle {
+  height: 1.8rem;
+  width: 1.8rem;
+  background-color: #999999;
+  border-radius: 50%;
+  border-color: white;
+  border-width: 0.2rem;
+  border-style: solid;
+  margin:auto;
+}
+
+.surroundingbox {
+  border-style: solid;
+  border-width: 0.2rem;
+  border-radius: 0.7rem;
+  border-color: white;
+  margin: 0.2rem;
+  display: flex;
+  flex-direction: row; /* Default, specific shadows might override */
+}
+
+.greyshadow {
+  background-image: radial-gradient(#888888 20%, #666666 40%, #444444 60%, #222222 80%, #111111 90%);
+  /* display: flex; REMOVED */
+  /* flex-direction: column; REMOVED */
+}
+.yellowshadow {
+  background-image: radial-gradient(#995 20%, #884 40%, #663 60%, #441 80%, #330 90%);
+  display: flex;
+  flex-direction: column; /* For the offset grid wrapper */
+}
+.blueshadow {
+  background-image: radial-gradient(#229 20%, #228 40%, #116 60%, #114 80%, #113 90%);
+  color: #00f; /* Consistent with blue elements */
+  width: 100%;
+  display: flex; 
+  flex-direction: row; 
+}
+.greenshadow {
+  background-image: radial-gradient(#373 20%, #363 40%, #353 60%, #242 80%, #131 90%);
+  color: #0a0;
+  width: 100%;
+}
+.pinkshadow { /* New class for pink section */
+  background-image: radial-gradient(#FF85C2 20%, #FF69B4 40%, #F450A0 60%, #E91E63 80%, #D81B60 90%);
+  color: white; 
+  width: 100%;
+}
+
+
+.column {
+  margin-left: auto;
+  margin-right: auto;
+  flex-direction: column;
+  position: relative;
+  display: flex; 
+  align-items: center; 
+}
+
+.lessthan {
+  position: absolute;
+  bottom: -0.6rem;
+  right: -0.5rem;
+  font-size: 4rem;
+  color: white;
+  font-weight: 500;
+  z-index: 5;
+  -webkit-text-stroke: #E91E63 1px; /* Updated to pink */
+}
+
+.dash {
+  font-size: 4rem; /* Adjust size as needed */
+  line-height: 2.4rem; /* Match font-size for vertical centering */
+  color: white;
+  font-weight: 500; /* Adjust weight as needed */
+  z-index: 5;
+  margin: 0 -0.4rem; /* Adjust margin to overlap boxes, removed auto for vertical align */
+  -webkit-text-stroke: #0a0 1px; /* Green stroke */
+}
+
+.scorecard {
+  background-color: black;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.strikethrough {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.strikethrough::before {
+  transform: rotate(50deg);
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 0.2rem;
+  background-color: black;
+}
+
+.strikethrough::after {
+  transform: rotate(-50deg);
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 0.2rem;
+  background-color: black;
+}
+
+.smallstrikethrough {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.smallstrikethrough::before {
+  transform: rotate(60deg);
+  height: 0.15rem;
+  position: absolute;
+  content: '';
+  width: 100%;
+  background-color: white;
+}
+
+.smallstrikethrough::after {
+  transform: rotate(-50deg);
+  height: 0.2rem;
+  position: absolute;
+  content: '';
+  width: 100%;
+  background-color: white;
+}
+
+.yellowstrike {
+  background-color: #ff0;
+}
+.yellowstrike::before {
+  background-color: black;
+}
+.yellowstrike::after {
+  background-color: black;
+}
+.wider {
+  border-left-width: 0.45rem;
+  border-right-width: 0.45rem;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.belo {
+  position: absolute;
+  top: 3.4rem;
+  left: 0.36rem;
+}
+.foxbelo {
+  position: absolute;
+  top: 3.35rem;
+  left: 0.4rem;
+}
+.below {
+  position: absolute;
+  top: 1.6rem;
+  left: 0.36rem;
+}
+.foxbelow {
+  position: absolute;
+  top: 1.55rem;
+  left: 0.4rem;
+}
+
+.gobelow {
+  margin-top: 0.1rem;
+  margin-bottom: 1rem;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.hiddenscore {
+  font-size: 0.001rem;
+}
+
+/* Text color classes for the grey 4x6 grid */
+.text-yellow-content { color: #ff0; }
+.text-blue-content { color: #00f; }
+.text-green-content { color: #0a0; }
+.text-pink-content { color: #E91E63; }

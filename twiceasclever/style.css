@@ -25,6 +25,36 @@ div {
   user-select: none;
 }
 
+.yellowbonus {
+  background-color: #f5c820;
+  color: black;
+  border-color: black;
+}
+
+.pinkbonus {
+  background-color: #E91E63;
+  color: white;
+  border-color: black;
+}
+
+.greenbonus {
+  background-color: #0a0;
+  color: white;
+  border-color: black;
+}
+
+.greybonus {
+  background-color: #9E9E9E; /* Grey color */
+  color: black;
+  border-color: black;
+}
+
+.bluebonus {
+  background-color: #00f; /* Blue color */
+  color: white; /* White text for blue background */
+  border-color: black;
+}
+
 .blackbonus {
   font-family: sans-serif;
 }
@@ -77,11 +107,11 @@ div {
 }
 
 .fox {
-  background-color: #f60;
+  background-color: #9E9E9E;
   color: white;
 }
 .fox::before {
-  background-color: #f60;
+  background-color: #9E9E9E;
 }
 .foxo {
   background-color: #f60;
@@ -91,11 +121,11 @@ div {
   background-color: #f60;
 }
 .foxy {
-  background-color: #ff0;
+  background-color: #f5c820;
   color: black;
 }
 .foxy::before {
-  background-color: #ff0;
+  background-color: #f5c820;
 }
 .foxb {
   background-color: #00f;
@@ -135,11 +165,11 @@ div {
   background-color: #9E9E9E;
 }
 .yellowpoints {
-  background-color: #ff0;
+  background-color: #f5c820;
   color: black;
 }
 .yellowpoints::before {
-  background-color: #ff0;
+  background-color: #f5c820;
 }
 .bluepoints {
   background-color: #00f;
@@ -219,7 +249,7 @@ div {
   /* flex-direction: column; REMOVED */
 }
 .yellowshadow {
-  background-image: radial-gradient(#995 20%, #884 40%, #663 60%, #441 80%, #330 90%);
+  background-image: radial-gradient(#a95 20%, #984 40%, #773 60%, #552 80%, #441 90%);
   display: flex;
   flex-direction: column; /* For the offset grid wrapper */
 }
@@ -237,7 +267,7 @@ div {
 }
 .pinkshadow { /* New class for pink section */
   background-image: radial-gradient(#FF85C2 20%, #FF69B4 40%, #F450A0 60%, #E91E63 80%, #D81B60 90%);
-  color: white; 
+  color: #E91E63; 
   width: 100%;
 }
 
@@ -262,25 +292,66 @@ div {
   -webkit-text-stroke: #E91E63 1px; /* Updated to pink */
 }
 
+.greaterthan {
+  align-self: flex-start; /* Prevent stretching to column height */
+  height: 2rem;           /* Match the height of the .square elements */
+  margin-top: 1.2rem;     /* Align top with .square (points height 1.1rem + square margin-top 0.1rem) */
+  display: flex;          /* Use flex to center content within .greaterthan */
+  align-items: center;    /* Vertically center the '≥' symbol */
+  justify-content: center;/* Horizontally center the '≥' symbol (optional, as it's usually one char) */
+  font-size: 2rem;        /* Size of the '≥' symbol */
+  color: white;
+  font-weight: 500;
+  z-index: 5;
+  margin-left: -0.4rem;   /* Horizontal overlap */
+  margin-right: -0.4rem;  /* Horizontal overlap */
+  -webkit-text-stroke: #00f 1px; /* Blue stroke */
+}
+
 .dash {
   font-size: 4rem; /* Adjust size as needed */
   line-height: 2.4rem; /* Match font-size for vertical centering */
   color: white;
   font-weight: 500; /* Adjust weight as needed */
   z-index: 5;
-  margin: 0 -0.4rem; /* Adjust margin to overlap boxes, removed auto for vertical align */
+  /* margin: 0 -0.4rem; REMOVED - will be on wrapper */
   -webkit-text-stroke: #0a0 1px; /* Green stroke */
+}
+
+.dash-wrapper {
+  position: relative;
+  display: flex; /* To center dash within its allocated space if needed */
+  align-items: center; /* Align dash vertically */
+  justify-content: center; /* Center dash horizontally */
+  margin: 0 -0.4rem; /* Original margin from .dash to overlap boxes */
+  height: 2.4rem; /* Match line-height of .dash to maintain vertical flow */
+}
+
+.score-above-dash {
+  position: absolute;
+  top: -0.6rem; /* Adjusted for better overlap with diamond shape */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6; /* Above the dash */
+  /* Removed background, color, padding, border-radius, font-size, font-family, white-space */
+}
+
+body {
+  background-color:#000000;
+  margin: 0; /* This is good for full-width behavior */
 }
 
 .scorecard {
   background-color: black;
+  /* max-width: 30rem; REMOVED */
+  /* margin: 0 auto; REMOVED */
 }
 
 .row {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 26rem;
+  max-width: 30rem;
 }
 
 .strikethrough {
@@ -334,7 +405,7 @@ div {
 }
 
 .yellowstrike {
-  background-color: #ff0;
+  background-color: #f5c820;
 }
 .yellowstrike::before {
   background-color: black;
@@ -392,7 +463,7 @@ div {
 }
 
 /* Text color classes for the grey 4x6 grid */
-.text-yellow-content { color: #ff0; }
+.text-yellow-content { color: #f5c820; }
 .text-blue-content { color: #00f; }
 .text-green-content { color: #0a0; }
 .text-pink-content { color: #E91E63; }

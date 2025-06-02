@@ -28,31 +28,31 @@ div {
 .yellowbonus {
   background-color: #f5c820;
   color: black;
-  border-color: black;
+  border-color: white;
 }
 
 .pinkbonus {
   background-color: #E91E63;
   color: white;
-  border-color: black;
+  border-color: white;
 }
 
 .greenbonus {
   background-color: #0a0;
   color: white;
-  border-color: black;
+  border-color: white;
 }
 
 .greybonus {
   background-color: #9E9E9E; /* Grey color */
   color: black;
-  border-color: black;
+  border-color: white;
 }
 
 .bluebonus {
   background-color: #00f; /* Blue color */
   color: white; /* White text for blue background */
-  border-color: black;
+  border-color: white;
 }
 
 .blackbonus {

@@ -21,10 +21,10 @@ function calcSilver() {
       const squareId = "s" + (rowIndex * 6 + colIndex);
       const squareElement = document.getElementById(squareId);
       if (squareElement && squareElement.classList.contains("strikethrough")) {
+        if (colIndex === 3) {
+          foxSquares++;
+        }
         markedInRow++;
-      }
-      if (colIndex === 3) {
-        foxSquares++;
       }
     }
     total += silverPointsPerRowMap[Math.min(markedInRow, 6)] || 0;
@@ -53,8 +53,8 @@ function calcYellow() {
 
   document.getElementById("yellowpoints").innerHTML = total.toString();
   const allHaveStrikethrough =
-    document.getElementById('y2')?.classList.contains('strikethrough') &&
-    document.getElementById('y6')?.classList.contains('strikethrough') &&
+    document.getElementById('y8')?.classList.contains('strikethrough') &&
+    document.getElementById('y9')?.classList.contains('strikethrough') &&
     document.getElementById('y10')?.classList.contains('strikethrough');
   if (allHaveStrikethrough) {
     numFoxes++;
@@ -69,16 +69,17 @@ function calcBlue() {
   for (let i = 1; i <= 12; i++) {
     const id = "b" + i; // IDs are b1-b12 in blue area
     const ele = document.getElementById(id);
-    if (ele && ele.classList.contains("strikethrough")) {
-      checkedCount++;
+    if (ele) {
+      const numberVal = parseInt(ele.dataset.value || "0");
+      if (Number.isInteger(numberVal) && numberVal > 0) {
+        checkedCount++;
+      }
     }
   }
   const bluePointsMap = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78]; // For 0 to 12 checked
   total = bluePointsMap[Math.min(checkedCount, 12)] || 0;
 
-  // Fox: If b9 (which has a fox bonus icon under it) is checked.
-  const b9 = document.getElementById("b9");
-  if (b9 && b9.classList.contains("strikethrough")) {
+  if (total >= 45) {
     numFoxes++;
   }
 
@@ -225,14 +226,23 @@ function strikethrough(element) {
 
 function circle(element) {
   let list = element.classList
-  if (element.style.borderColor == "white" || element.style.borderColor == "" || element.style.borderColor == null) {
-    element.style.borderColor = "black"
+  const isSquare = list.contains("square")
+  const colorProperty = isSquare ? "outlineColor" : "borderColor";
+
+  if (element.style[colorProperty] == "white" || element.style[colorProperty] == "" || element.style[colorProperty] == null) {
+    element.style[colorProperty] = "black";
+    if (isSquare) {
+      element.style.outlineStyle = "solid"
+    }
   } else {
     if (list.contains("strikethrough")) {
-      list.remove("strikethrough")
-      element.style.borderColor = "white"
+      list.remove("strikethrough");
+      element.style[colorProperty] = "white";
+      if (isSquare) {
+        element.style.outlineStyle = "none"
+      }
     } else {
-      list.add("strikethrough")
+      list.add("strikethrough");
     }
   }
   updateScore();

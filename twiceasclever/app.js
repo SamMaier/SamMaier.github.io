@@ -155,21 +155,38 @@ function updateScore() {
   // Fox scoring: numFoxes is incremented in individual calc functions.
   // The lowest score among all colors is the value for each fox.
   let foxValue = Math.min(silverScore, yellowScore, blueScore, greenScore, pinkScore);
-  if (!isFinite(foxValue) || isNaN(foxValue)) {
-      foxValue = 0; // Handle cases where a score might not be a number yet
+  if (foxValue === silverScore) {
+    foxStyleClass = "foxs"
+  } else if (foxValue === yellowScore) {
+    foxStyleClass = "foxy"
+  } else if (foxValue === blueScore) {
+    foxStyleClass = "foxb"
+  } else if (foxValue === greenScore) {
+    foxStyleClass = "foxg"
+  } else {
+    foxStyleClass = "foxp"
   }
 
   // Update fox display
   // The individual fox icons on the board are now styled generically as grey.
   // We only update the total fox score display at the bottom.
-  const allFoxElements = document.querySelectorAll(".points.fox .pointsnumber");
-  allFoxElements.forEach(el => {
-      el.innerHTML = foxValue.toString();
-  });
+  let allFoxElements = document.getElementsByClassName("fox")
+  for (let el of allFoxElements) {
+    classes = el.className.split(" ")
+    newClasses = ""
+    for (let j = 0; j < classes.length; j++) {
+      if (classes[j].startsWith("fox") && classes[j].length === 4) {
+        console.log("removing " + classes[j])
+      } else {
+        newClasses += classes[j] + " "
+      }
+    }
+    newClasses += foxStyleClass
+    el.className = newClasses
+    el.children[0].innerHTML = foxValue.toString()
+  }
 
   document.getElementById("foxmultiplier").innerHTML = numFoxes.toString() + "x";
-  document.getElementById("foxpoints").children[0].innerHTML = (numFoxes * foxValue).toString();
-
 
   let totalScoreVal = silverScore + yellowScore + blueScore + greenScore + pinkScore + (numFoxes * foxValue);
   document.getElementById("totalScore").innerHTML = totalScoreVal.toString();

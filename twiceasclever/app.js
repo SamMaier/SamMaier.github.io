@@ -87,28 +87,38 @@ function calcBlue() {
   return total;
 }
 
-// --- Scoring for Green Area (formerly Orange in original) ---
 function calcGreen() {
   let total = 0;
-  for (let i = 1; i <= 12; i++) {
-    const id = "g" + i; // IDs are g1-g12 in green area
-    const ele = document.getElementById(id);
-    if (ele) {
-      const valStr = ele.innerHTML; // Original text like 'x2', or the entered number
-      const originalText = ele.dataset.originalText || valStr; // Prefer original if available
-      const multiplierMatch = originalText.match(/x(\d)/); // e.g., x2, x3 from original text
-      const actualMultiplier = multiplierMatch ? parseInt(multiplierMatch[1]) : 1;
-      const numberVal = parseInt(ele.dataset.value || "0"); // Entered value is stored in data-value
+  const pairs = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]];
+  
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
+    const ele1 = document.getElementById("g" + pair[0]);
+    const ele2 = document.getElementById("g" + pair[1]);
+    let scoreForPair = 0;
 
-      if (Number.isInteger(numberVal) && numberVal > 0) {
-        total += (numberVal * actualMultiplier);
-      }
-      // Fox: If g7 has a value (fox icon is under g7).
-      if (i === 7 && Number.isInteger(numberVal) && numberVal > 0) {
-        numFoxes++;
+    if (ele1 && ele2) {
+      const val1 = parseInt(ele1.dataset.value || "0");
+      const val2 = parseInt(ele2.dataset.value || "0");
+
+      if (val1 > 0 && val2 > 0) {
+        scoreForPair = val1 - val2;
       }
     }
+    
+    const scoreElement = document.getElementById("g-score-" + (i + 1));
+    if (scoreElement) {
+      scoreElement.innerHTML = scoreForPair.toString();
+    }
+    total += scoreForPair;
   }
+
+  // Fox logic remains the same
+  const ele7 = document.getElementById("g7");
+  if (ele7 && parseInt(ele7.dataset.value || "0") > 0) {
+    numFoxes++;
+  }
+
   document.getElementById("greenpoints").innerHTML = total.toString();
   return total;
 }
@@ -205,27 +215,21 @@ function numberpicked(elementFromModal) {
     const numericValue = parseInt(pickedValue);
     selected.dataset.value = numericValue; // Store the actual numeric value
 
-    // Display logic (might differ based on area)
-    if (selected.id.startsWith("g")) { // Green area
-        selected.innerHTML = (selected.dataset.originalText || "") + "<br>" + numericValue;
-    } else if (selected.id.startsWith("p")) { // Pink area
-        // Display the number. Original text like '≥2' is in selected.dataset.originalText
-        selected.innerHTML = numericValue;
-        // Validation for >=N should be here or before calling numberpicked
+    // Display the number in the box
+    selected.innerHTML = numericValue;
+    selected.style.color = "black";
+
+    // Validation for pink area
+    if (selected.id.startsWith("p")) {
         const conditionText = selected.dataset.originalText || "";
         const conditionMatch = conditionText.match(/≥(\d)/);
         if (conditionMatch) {
             const minVal = parseInt(conditionMatch[1]);
             if (numericValue < minVal) {
-                // Handle invalid input, e.g., alert or clear
-                // For now, let's assume valid input or rely on user
                 console.warn(`Value ${numericValue} for ${selected.id} is less than required ${minVal}`);
             }
         }
-    } else { // Silver (s) and Yellow (y) areas
-        selected.innerHTML = numericValue;
     }
-    selected.style.color = "black";
   }
   turnOffModal();
 }
@@ -276,26 +280,48 @@ function numberbox(element, multipl = 1) {
   modal.style.display = "flex";
   selected = element;
 
-  for (let i = 1; i <= 6; i++) {
+  const isBlue = element.id.startsWith("b");
+  const maxNumber = isBlue ? 12 : 6;
+  
+  document.getElementById("modal-extra-rows").style.display = isBlue ? "block" : "none";
+
+  for (let i = 1; i <= 12; i++) {
     let id = "sq" + i;
     el = document.getElementById(id);
-    el.innerHTML = i * multiplier;
-    el.style.display = "block";
+    if (i > 6 && !isBlue) {
+      el.style.display = "none";
+    } else {
+      el.innerHTML = i * multiplier;
+      el.style.display = "block";
+    }
   }
 
-  // Special logic for Pink area (sequential values)
-  if (element.id.startsWith("p")){
+  // Special logic for Pink area (>= initial value)
+  if (element.id.startsWith("p")) {
+    const conditionText = element.dataset.originalText || "";
+    const conditionMatch = conditionText.match(/≥(\d)/);
+    if (conditionMatch) {
+        const minVal = parseInt(conditionMatch[1]);
+        for (let i = 1; i <= 6; i++) {
+            if (i * multiplier < minVal) {
+                document.getElementById("sq" + i).style.display = "none";
+            }
+        }
+    }
+  }
+
+  // Special logic for Blue area (<= previous value)
+  if (element.id.startsWith("b")){
     let prevNumStr = element.id.substring(1);
     let prevNum = Number(prevNumStr) - 1;
-    if (prevNum > 0) { // Check if there is a previous pink box
-      const prevPinkBox = document.getElementById("p" + prevNum);
-      // Check if previous pink box has a value and it's not 6 (max value)
-      if (prevPinkBox && prevPinkBox.dataset.value && prevPinkBox.dataset.value !== "6"){
-        const prevVal = Number(prevPinkBox.dataset.value);
-        // Hide numbers in modal that are less than or equal to the previous pink box's value
-        for (let i = 1; i <= 6; i++) {
-          if (i * multiplier <= prevVal) { // Compare with potential modal value
-            document.getElementById("sq" + i).style.display = "none";
+    if (prevNum > 0) { 
+      const prevBox = document.getElementById("b" + prevNum);
+      if (prevBox && prevBox.dataset.value){
+        const prevVal = Number(prevBox.dataset.value);
+        for (let i = 1; i <= maxNumber; i++) {
+          let el = document.getElementById("sq" + i);
+          if (i * multiplier > prevVal) {
+            el.style.display = "none";
           }
         }
       }

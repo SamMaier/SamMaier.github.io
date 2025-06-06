@@ -52,11 +52,11 @@ function calcYellow() {
   let total = yellowPointsMap[Math.min(checkedCount, yellowPointsMap.length - 1)] || 0;
 
   document.getElementById("yellowpoints").innerHTML = total.toString();
-  const allHaveStrikethrough =
-    document.getElementById('y8')?.classList.contains('strikethrough') &&
-    document.getElementById('y9')?.classList.contains('strikethrough') &&
-    document.getElementById('y10')?.classList.contains('strikethrough');
-  if (allHaveStrikethrough) {
+  const allHaveOutline =
+    document.getElementById('y8')?.style.outlineColor === "black" &&
+    document.getElementById('y9')?.style.outlineColor === "black" &&
+    document.getElementById('y10')?.style.outlineColor === "black";
+  if (allHaveOutline) {
     numFoxes++;
   }
   return total;
@@ -90,33 +90,33 @@ function calcBlue() {
 function calcGreen() {
   let total = 0;
   const pairs = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]];
-  
+
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
     const ele1 = document.getElementById("g" + pair[0]);
     const ele2 = document.getElementById("g" + pair[1]);
     let scoreForPair = 0;
 
-    if (ele1 && ele2) {
+    if (ele1) {
       const val1 = parseInt(ele1.dataset.value || "0");
-      const val2 = parseInt(ele2.dataset.value || "0");
 
-      if (val1 > 0 && val2 > 0) {
-        scoreForPair = val1 - val2;
+      if (pair[0] === 7 && val1 > 0) { // Fox is in the g7/g8 pair
+        numFoxes++;
+      }
+      if (ele2) {
+        const val2 = parseInt(ele2.dataset.value || "0");
+
+        if (val1 > 0 && val2 > 0) {
+          scoreForPair = val1 - val2;
+        }
       }
     }
-    
+
     const scoreElement = document.getElementById("g-score-" + (i + 1));
     if (scoreElement) {
       scoreElement.innerHTML = scoreForPair.toString();
     }
     total += scoreForPair;
-  }
-
-  // Fox logic remains the same
-  const ele7 = document.getElementById("g7");
-  if (ele7 && parseInt(ele7.dataset.value || "0") > 0) {
-    numFoxes++;
   }
 
   document.getElementById("greenpoints").innerHTML = total.toString();

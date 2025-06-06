@@ -258,6 +258,8 @@ div {
   background-image: radial-gradient(#a95 20%, #984 40%, #773 60%, #552 80%, #441 90%);
   display: flex;
   flex-direction: column; /* For the offset grid wrapper */
+  color: #f5c820;
+  font-weight: bold;
 }
 .blueshadow {
   background-image: radial-gradient(#229 20%, #228 40%, #116 60%, #114 80%, #113 90%);
@@ -473,3 +475,5 @@ body {
 .text-blue-content { color: #00f; }
 .text-green-content { color: #0a0; }
 .text-pink-content { color: #E91E63; }
+
+

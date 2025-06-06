@@ -113,12 +113,12 @@ div {
 .fox::before {
   background-color: #9E9E9E;
 }
-.foxo {
-  background-color: #f60;
-  color: white;
+.foxs {
+  background-color: #9E9E9E; /* silver */
+  color: black;
 }
-.foxo::before {
-  background-color: #f60;
+.foxs::before {
+  background-color: #9E9E9E;
 }
 .foxy {
   background-color: #f5c820;
@@ -141,7 +141,13 @@ div {
 .foxg::before {
   background-color: #0a0;
 }
-/* .foxp was purple, now pink, but fox class is generic orange by default. This specific color might be unused if not referenced. */
+.foxp {
+  background-color: #E91E63;
+  color: white;
+}
+.foxp::before {
+  background-color: #E91E63;
+}
 
 .whitepoints {
   background-color: #fff;

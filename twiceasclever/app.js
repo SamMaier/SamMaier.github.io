@@ -155,6 +155,10 @@ function updateScore() {
 
   numFoxes = 0; // Reset before recalculating
 
+  if (document.getElementById("fox-circle").style.borderColor === "black") {
+    numFoxes++;
+  }
+
   // Call new calculation functions
   let silverScore = calcSilver();
   let yellowScore = calcYellow();
@@ -266,6 +270,7 @@ function circle(element) {
       list.add("strikethrough");
     }
   }
+
   updateScore();
 }
 
@@ -282,7 +287,7 @@ function numberbox(element, multipl = 1) {
 
   const isBlue = element.id.startsWith("b");
   const maxNumber = isBlue ? 12 : 6;
-  
+
   document.getElementById("modal-extra-rows").style.display = isBlue ? "block" : "none";
 
   for (let i = 1; i <= 12; i++) {

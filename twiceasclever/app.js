@@ -189,9 +189,8 @@ function updateScore() {
     classes = el.className.split(" ")
     newClasses = ""
     for (let j = 0; j < classes.length; j++) {
-      if (classes[j].startsWith("fox") && classes[j].length === 4) {
-        console.log("removing " + classes[j])
-      } else {
+      if (!(classes[j].startsWith("fox") && classes[j].length === 4)) {
+        // Only readding the classes that arent like "foxp" or "foxs"
         newClasses += classes[j] + " "
       }
     }
@@ -293,7 +292,7 @@ function numberbox(element, multipl = 1) {
   for (let i = 1; i <= 12; i++) {
     let id = "sq" + i;
     el = document.getElementById(id);
-    if (i > 6 && !isBlue) {
+    if ((i > 6 && !isBlue) || i == 1 && isBlue) {
       el.style.display = "none";
     } else {
       el.innerHTML = i * multiplier;

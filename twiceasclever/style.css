@@ -44,7 +44,7 @@ div {
 }
 
 .greybonus {
-  background-color: #9E9E9E; /* Grey color */
+  background-color: #AEAEAE; /* Grey color */
   color: black;
   border-color: white;
 }
@@ -107,18 +107,18 @@ div {
 }
 
 .fox {
-  background-color: #9E9E9E;
-  color: white;
+  background-color: #AEAEAE;
+  color: black;
 }
 .fox::before {
-  background-color: #9E9E9E;
+  background-color: #AEAEAE;
 }
 .foxs {
-  background-color: #9E9E9E; /* silver */
+  background-color: #AEAEAE; /* silver */
   color: black;
 }
 .foxs::before {
-  background-color: #9E9E9E;
+  background-color: #AEAEAE;
 }
 .foxy {
   background-color: #f5c820;
@@ -164,11 +164,11 @@ div {
   height: 3rem;
 }
 .greypoints { /* New class for grey score */
-  background-color: #9E9E9E; 
+  background-color: #AEAEAE; 
   color: black;
 }
 .greypoints::before {
-  background-color: #9E9E9E;
+  background-color: #AEAEAE;
 }
 .yellowpoints {
   background-color: #f5c820;

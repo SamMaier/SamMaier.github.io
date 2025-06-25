@@ -302,18 +302,13 @@ div {
 }
 
 .greaterthan {
-  align-self: flex-start; /* Prevent stretching to column height */
-  height: 2rem;           /* Match the height of the .square elements */
-  margin-top: 1.2rem;     /* Align top with .square (points height 1.1rem + square margin-top 0.1rem) */
-  display: flex;          /* Use flex to center content within .greaterthan */
-  align-items: center;    /* Vertically center the '≥' symbol */
-  justify-content: center;/* Horizontally center the '≥' symbol (optional, as it's usually one char) */
-  font-size: 2rem;        /* Size of the '≥' symbol */
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  margin: 0 -0.6rem;
   color: white;
   font-weight: 500;
   z-index: 5;
-  margin-left: -0.4rem;   /* Horizontal overlap */
-  margin-right: -0.4rem;  /* Horizontal overlap */
   -webkit-text-stroke: #00f 1px; /* Blue stroke */
 }
 

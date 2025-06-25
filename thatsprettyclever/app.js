@@ -1,6 +1,7 @@
 var selected = null;
 var multiplier = 1;
 var numFoxes = 0;
+var isBeforeUnloadRegistered = false;
 
 function calcYellow() {
   let total = 0
@@ -108,6 +109,12 @@ function calcPurple() {
 }
 
 function updateScore() {
+  isBeforeUnloadRegistered = true;
+  window.addEventListener('beforeunload', function (event) {
+    event.preventDefault();
+    // This is required for some older browsers.
+    event.returnValue = '';
+  });
   numFoxes = 0
   let yellow = calcYellow()
   let blue = calcBlue()

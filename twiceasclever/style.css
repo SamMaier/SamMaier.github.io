@@ -250,7 +250,8 @@ div {
 }
 
 .greyshadow {
-  background-image: radial-gradient(#888888 20%, #666666 40%, #444444 60%, #222222 80%, #111111 90%);
+  background-image: radial-gradient(#888888 20%, #777777 40%, #666666 60%, #444444 80%, #222222 90%);
+
   /* display: flex; REMOVED */
   /* flex-direction: column; REMOVED */
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoresheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="player-toggle">
+        <label>
+            <input type="radio" name="players" value="4" checked>
+            <span>4 Players</span>
+        </label>
+        <label>
+            <input type="radio" name="players" value="6">
+            <span>6 Players</span>
+        </label>
+    </div>
+    <table id="scoresheet">
+        <thead>
+            <tr>
+                <th>Dealer</th>
+                <th></th>
+                <th>We</th>
+                <th>They</th>
+                <th>Bid</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div id="bid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="bid-modal-title">Select Bid</h2>
+            <div class="selector">
+                <h3>Number</h3>
+                <div id="number-selector"></div>
+            </div>
+            <div class="selector">
+                <h3>Suit</h3>
+                <div id="suit-selector">
+                    <span class="suit" data-suit="♠">♠</span>
+                    <span class="suit" data-suit="♥">♥</span>
+                    <span class="suit" data-suit="♣">♣</span>
+                    <span class="suit" data-suit="♦">♦</span>
+                    <span class="suit" data-suit="NT">NT</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

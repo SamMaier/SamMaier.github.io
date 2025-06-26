@@ -49,6 +49,11 @@ thead th:nth-child(5) {
     cursor: pointer;
 }
 
+.we-cell.disabled,
+.they-cell.disabled {
+    cursor: not-allowed;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -92,14 +97,21 @@ thead th:nth-child(5) {
 }
 
 #number-selector span,
+#score-number-selector span,
 .suit {
     cursor: pointer;
     padding: 5px;
     border: 1px solid #ccc;
     margin-right: 5px;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
 }
 
 #number-selector span.selected,
+#score-number-selector span.selected,
 .suit.selected {
     background-color: #ddd;
 }

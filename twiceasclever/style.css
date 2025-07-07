@@ -226,6 +226,7 @@ div {
   text-align: center;
   margin: auto;
   user-select: none;
+  outline-width: thick;
 }
 
 .circle {

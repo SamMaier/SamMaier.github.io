@@ -1,0 +1,37 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+.container {
+    display: flex;
+}
+
+.input-form {
+    width: 300px;
+    margin-right: 20px;
+}
+
+.input-form label, .input-form input, .input-form textarea, .input-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#schedule-output {
+    flex-grow: 1;
+}
+
+.round {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.court {
+    margin-bottom: 10px;
+}
+
+.court h3 {
+    margin-top: 0;
+}

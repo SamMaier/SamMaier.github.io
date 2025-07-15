@@ -32,34 +32,63 @@
                 return;
             }
 
-            const schedule = generateSchedule(playerNames, numCourts, numRounds);
-            displaySchedule(schedule);
+            const { schedule, breaks } = generateSchedule(playerNames, numCourts, numRounds);
+            displaySchedule(schedule, breaks);
         });
 
-        function displaySchedule(schedule) {
+        function displaySchedule(schedule, breaks) {
             const outputDiv = document.getElementById('schedule-output');
             outputDiv.innerHTML = '';
 
             schedule.forEach((round, roundIndex) => {
                 const roundDiv = document.createElement('div');
                 roundDiv.classList.add('round');
-                roundDiv.innerHTML = `<h2>Round ${roundIndex + 1}</h2>`;
+
+                const roundTitle = document.createElement('h2');
+                roundTitle.textContent = `Round ${roundIndex + 1}`;
+                roundDiv.appendChild(roundTitle);
+
+                const roundContentDiv = document.createElement('div');
+                roundContentDiv.classList.add('round-content');
+
+                const courtsDiv = document.createElement('div');
+                courtsDiv.classList.add('courts');
 
                 round.forEach((court, courtIndex) => {
                     if (court) {
                         const courtDiv = document.createElement('div');
                         courtDiv.classList.add('court');
-                        courtDiv.innerHTML = `<h3>Court ${courtIndex + 1}</h3>`;
-                        const playersList = document.createElement('ul');
+                        const courtTitle = document.createElement('h3');
+                        courtTitle.textContent = `Court ${courtIndex + 1}`;
+                        courtDiv.appendChild(courtTitle);
+
+                        const playersDiv = document.createElement('div');
                         court.forEach(player => {
-                            const li = document.createElement('li');
-                            li.textContent = player;
-                            playersList.appendChild(li);
+                            const playerDiv = document.createElement('div');
+                            playerDiv.textContent = player;
+                            playersDiv.appendChild(playerDiv);
                         });
-                        courtDiv.appendChild(playersList);
-                        roundDiv.appendChild(courtDiv);
+                        courtDiv.appendChild(playersDiv);
+                        courtsDiv.appendChild(courtDiv);
                     }
                 });
+                roundContentDiv.appendChild(courtsDiv);
+
+                const breakDiv = document.createElement('div');
+                breakDiv.classList.add('break');
+                const breakTitle = document.createElement('h3');
+                breakTitle.textContent = 'On Break';
+                breakDiv.appendChild(breakTitle);
+                const breakList = document.createElement('div');
+                breaks[roundIndex].forEach(player => {
+                    const playerDiv = document.createElement('div');
+                    playerDiv.textContent = player;
+                    breakList.appendChild(playerDiv);
+                });
+                breakDiv.appendChild(breakList);
+                roundContentDiv.appendChild(breakDiv);
+
+                roundDiv.appendChild(roundContentDiv);
                 outputDiv.appendChild(roundDiv);
             });
         }

@@ -1,15 +1,9 @@
-
-document.addEventListener('DOMContentLoaded', () => {
-    //This is a placeholder for the actual implementation.
-    console.log("Pickleball schedule generator loaded.");
-});
-
 function generateSchedule(players, courts, rounds) {
     const breaks = assignBreaks(players, rounds, courts);
     const partners = assignPartners(players, breaks);
     const opponents = assignOpponents(partners);
     const schedule = assignCourts(opponents, courts);
-    return schedule;
+    return { schedule, breaks };
 }
 
 function assignBreaks(playerNames, numRounds, numCourts) {

@@ -12,54 +12,67 @@ function assignBreaks(playerNames, numRounds, numCourts) {
     const playersPerCourt = 4;
     const numPlayersOnCourts = numCourts * playersPerCourt;
     const numBreaksPerRound = numPlayers - numPlayersOnCourts;
-    let breakCounts = new Array(numPlayers).fill(0);
     let breaks = Array.from({ length: numRounds }, () => []);
-    let lastRoundBreaks = [];
 
+    let prevBreaker = numPlayers;
     for (let round = 0; round < numRounds; round++) {
-        let potentialBreaks = players.filter(p => !lastRoundBreaks.includes(p));
-        potentialBreaks.sort((a, b) => breakCounts[players.indexOf(a)] - breakCounts[players.indexOf(b)]);
-
-        let selectedBreaks = potentialBreaks.slice(0, numBreaksPerRound);
+        let selectedBreaks = players.slice(prevBreaker, prevBreaker + numBreaksPerRound);
+        let wraparound = prevBreaker + numBreaksPerRound - numPlayers;
+        if (wraparound > 0) {
+            selectedBreaks.push(...players.slice(0, wraparound));
+        }
         breaks[round] = selectedBreaks;
-        lastRoundBreaks = selectedBreaks;
-
-        selectedBreaks.forEach(player => {
-            breakCounts[players.indexOf(player)]++;
-        });
+        prevBreaker = (prevBreaker + numBreaksPerRound) % numPlayers
     }
     return breaks;
 }
 
 function assignPartners(players, breaks) {
+    // This algorithm is highly biased towards 7 rounds with 4 courts, since this produces 7 unique divisors
+    let numPlaying = players.length - breaks[0].length;
+    let divisors = new Set();
+    // numplaying can be assumed to be even
+    for (let divisor = 1; divisor <= numPlaying/2; divisor++) {
+        if (numPlaying % (divisor*2) == 0) {
+            divisors.add(divisor);
+            divisors.add(numPlaying-divisor);
+        }
+    }
+    divisors = Array.from(divisors);
     let partners = [];
-    let pastPartners = {};
-    players.forEach(p => pastPartners[p] = []);
 
     for (let round = 0; round < breaks.length; round++) {
         let playingThisRound = players.filter(p => !breaks[round].includes(p));
         let roundPartners = [];
-        let pairedPlayers = new Set();
-
-        playingThisRound.forEach(player => {
-            if (!pairedPlayers.has(player)) {
-                let potentialPartners = playingThisRound.filter(p =>
-                    p !== player &&
-                    !pairedPlayers.has(p) &&
-                    !pastPartners[player].includes(p)
-                );
-
-                if (potentialPartners.length > 0) {
-                    let partner = potentialPartners[0];
-                    roundPartners.push([player, partner]);
-                    pastPartners[player].push(partner);
-                    pastPartners[partner].push(player);
-                    pairedPlayers.add(player);
-                    pairedPlayers.add(partner);
-                }
-            }
-        });
+        let curDivisor = divisors[round % divisors.length];
+        let effectiveDivisor = Math.min(curDivisor, numPlaying - curDivisor);
+        for (let pairing = 0; pairing < playingThisRound.length/2; pairing++) {
+            let p1 = Math.floor(pairing / effectiveDivisor) * 2 * effectiveDivisor + (pairing % effectiveDivisor);
+            let p2 = (p1 + curDivisor) % numPlaying;
+            roundPartners.push([playingThisRound[p1], playingThisRound[p2]]);
+        }
         partners.push(roundPartners);
+    }
+    // Just a check to print out
+    for (let i in players) {
+        let p = players[i]
+        let prevPartners = []
+        for (let round = 0; round < breaks.length; round++) {
+           for (let j in partners[round]) {
+               pair = partners[round][j]
+               if (pair.includes(p)) {
+                   let partner = pair[0];
+                   if (pair[0] === p) {
+                       partner = pair[1];
+                   }
+                   if (prevPartners.includes(partner)) {
+                       console.log("Pairing at round " + round + " - " + p + " & " + partner);
+                   } else {
+                       prevPartners.push(partner);
+                   }
+               }
+           }
+        }
     }
     return partners;
 }

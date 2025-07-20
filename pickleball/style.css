@@ -4,12 +4,11 @@ body {
 }
 
 .container {
-    display: flex;
+
 }
 
 .input-form {
-    width: 300px;
-    margin-right: 20px;
+    margin-bottom: 20px;
 }
 
 .input-form label, .input-form input, .input-form textarea, .input-form button {

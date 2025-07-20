@@ -1,63 +1,130 @@
+const BYE = "__bye__"
 function generateSchedule(players, courts, rounds) {
-    const breaks = assignBreaks(players, rounds, courts);
-    const partners = assignPartners(players, breaks);
+    const realPlayers = players.length;
+    let partners = assignPartners(players, rounds);
+    const breaks = assignBreaks(partners, rounds, realPlayers, courts);
+    partners = cleanupPartners(partners, breaks);
     const opponents = assignOpponents(partners);
     const schedule = assignCourts(opponents, courts);
     return { schedule, breaks };
 }
 
-function assignBreaks(playerNames, numRounds, numCourts) {
-    let players = [...playerNames];
-    const numPlayers = players.length;
-    const playersPerCourt = 4;
-    const numPlayersOnCourts = numCourts * playersPerCourt;
-    const numBreaksPerRound = numPlayers - numPlayersOnCourts;
-    let breaks = Array.from({ length: numRounds }, () => []);
+function assignBreaks(partners, numRounds, numPlayers, numCourts) {
+    // Since we are doing a round robin, we must assign breaks in the following fashion:
+    // Imagine a regular polygon (square, pentagon, hexagon, etc) which has the number of 
+    // vertices that we have players on break, with its base sitting "flat" at the bottom.
+    // The "bottom" is the opposite side to the pairing with the fixed location.
+    // So, if we have 4 courts (16 players on), and 21 players, we have 21-16=5 players on break.
+    // We then imagine a pentagon, with a vertex directly at the top (spot 1), and then jump 1/5
+    // the way around the circle. Since this is not continuous, and partners must be on break
+    // together, we only go halway around and pull the partners of the people selected.
+    //
+    // Also, in the even number of players case, since player 0 is fixed, we must swap them out
+    // with the first person taking their N+2th break.
+    //
+    // So, for the 20 player case, we'd create a square. We'd go 1/8 the way down (2 spots)
+    // (19 person circle) to the #3 spot. We'd then go 1/4 the way down (3 spots) to the #8 spot.
+    // These are paired with the #18 and #13 spots.
+    //
+    // Now, this is the theory. Since we've already been handed the partners, we can do this
+    // more simply by just removing certain partner locations from the array each time.
 
-    let prevBreaker = numPlayers;
+    const numOnBreak = numPlayers - (numCourts * 4);
+    const even = numPlayers % 2 == 0;
+    let breakLocations = [];
+    const locationsToSkip = numPlayers / numOnBreak;
+    let startingSpot = 0;
+    if (even) {
+        startingSpot = locationsToSkip/2;
+    }
+    for (let i = 0; i < numOnBreak / 2; i++) {
+        breakLocations.push(Math.round(startingSpot + (i * locationsToSkip)));
+    }
+    
+    const stationaryPlayer = partners[0][0][0];
+    let breaks = [];
+    let playerBreaks = {};
+    playerBreaks[stationaryPlayer] = 0;
     for (let round = 0; round < numRounds; round++) {
-        let selectedBreaks = players.slice(prevBreaker, prevBreaker + numBreaksPerRound);
-        let wraparound = prevBreaker + numBreaksPerRound - numPlayers;
-        if (wraparound > 0) {
-            selectedBreaks.push(...players.slice(0, wraparound));
+        let selectedPairings = [];
+        for (let i = 0; i < breakLocations.length; i++) {
+            selectedPairings.push(partners[round][breakLocations[i]]);
         }
+        if (even) {
+            let alreadySwapped = false;
+            for (let i = 0; i < selectedPairings.length; i++) {
+                for (let j = 0; j < 2; j++) {
+                    if (playerBreaks[selectedPairings[i][j]] > playerBreaks[stationaryPlayer]) {
+                        console.log("Swapping round " + round + " " + selectedPairings[i] + " for " + partners[round][0]);
+                        // We gotta swap this pairing with stationary player
+                        selectedPairings[i] = partners[round][0];
+                        alreadySwapped = true;
+                        break;
+                    }
+                }
+                if (alreadySwapped) {
+                    break;
+                }
+            }
+        }
+        let selectedBreaks = [];
+        for (let i = 0; i < selectedPairings.length; i++) {
+            for (let j = 0; j < 2; j++) {
+                let p = selectedPairings[i][j];
+                selectedBreaks.push(p);
+                if (!(p in playerBreaks)) {
+                    playerBreaks[p] = 0;
+                }
+                playerBreaks[p] += 1;
+            }
+        }
+
         breaks[round] = selectedBreaks;
-        prevBreaker = (prevBreaker + numBreaksPerRound) % numPlayers
+    }
+    let min = 100000;
+    let max = 0;
+    for (let p in playerBreaks) {
+        if (p == BYE) { continue; }
+        if (playerBreaks[p] > max) {
+            max = playerBreaks[p];
+        }
+        if (playerBreaks[p] < min) {
+            min = playerBreaks[p];
+        }
+    }
+    if (min + 2 <= max) {
+        console.log("BAD BREAK ASSIGNMENT");
+        console.log(playerBreaks);
     }
     return breaks;
 }
 
-function assignPartners(players, breaks) {
-    // This algorithm is highly biased towards 7 rounds with 4 courts, since this produces 7 unique divisors
-    let numPlaying = players.length - breaks[0].length;
-    let divisors = new Set();
-    // numplaying can be assumed to be even
-    for (let divisor = 1; divisor <= numPlaying/2; divisor++) {
-        if (numPlaying % (divisor*2) == 0) {
-            divisors.add(divisor);
-            divisors.add(numPlaying-divisor);
-        }
+function assignPartners(players, numRounds) {
+    // Round robin scheduler. The first position is always stationary. The first position is always
+    // a bye for an odd number of players.
+    let stationary = BYE;
+    let ps = [...players]; // Copy so we can check players later
+    if (players.length % 2 == 0) {
+        stationary = ps.pop();
     }
-    divisors = Array.from(divisors);
     let partners = [];
-
-    for (let round = 0; round < breaks.length; round++) {
-        let playingThisRound = players.filter(p => !breaks[round].includes(p));
-        let roundPartners = [];
-        let curDivisor = divisors[round % divisors.length];
-        let effectiveDivisor = Math.min(curDivisor, numPlaying - curDivisor);
-        for (let pairing = 0; pairing < playingThisRound.length/2; pairing++) {
-            let p1 = Math.floor(pairing / effectiveDivisor) * 2 * effectiveDivisor + (pairing % effectiveDivisor);
-            let p2 = (p1 + curDivisor) % numPlaying;
-            roundPartners.push([playingThisRound[p1], playingThisRound[p2]]);
+    for (let r = 0; r < numRounds; r++) {
+        // Pair up
+        currentPairings = [[stationary, ps.at(-1)]];
+        for (let i = 0; i < ((ps.length -1) / 2); i++) {
+            // Stupid JS doesn't allow negative index but at() does.
+            currentPairings.push([ps[i], ps.at(-2-i)]);
         }
-        partners.push(roundPartners);
+
+        partners[r] = currentPairings;
+        // Rotate
+        ps.unshift(ps.pop());
     }
     // Just a check to print out
     for (let i in players) {
         let p = players[i]
         let prevPartners = []
-        for (let round = 0; round < breaks.length; round++) {
+        for (let round = 0; round < numRounds; round++) {
            for (let j in partners[round]) {
                pair = partners[round][j]
                if (pair.includes(p)) {
@@ -66,7 +133,7 @@ function assignPartners(players, breaks) {
                        partner = pair[1];
                    }
                    if (prevPartners.includes(partner)) {
-                       console.log("Pairing at round " + round + " - " + p + " & " + partner);
+                       console.log("Repeated pairing at round " + round + " - " + p + " & " + partner);
                    } else {
                        prevPartners.push(partner);
                    }
@@ -75,6 +142,15 @@ function assignPartners(players, breaks) {
         }
     }
     return partners;
+}
+
+function cleanupPartners(partners, breaks) {
+    let retVal = [];
+    for (let r in partners) {
+        roundBreak = new Set(breaks[r]);
+        retVal.push(partners[r].filter(p => !roundBreak.has(p[0])));
+    }
+    return retVal;
 }
 
 function assignOpponents(partners) {

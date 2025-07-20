@@ -81,9 +81,11 @@
                 breakDiv.appendChild(breakTitle);
                 const breakList = document.createElement('div');
                 breaks[roundIndex].forEach(player => {
+                    if (player !== "__bye__") {
                     const playerDiv = document.createElement('div');
                     playerDiv.textContent = player;
                     breakList.appendChild(playerDiv);
+                    }
                 });
                 breakDiv.appendChild(breakList);
                 roundContentDiv.appendChild(breakDiv);

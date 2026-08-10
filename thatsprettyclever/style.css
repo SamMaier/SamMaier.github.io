@@ -12,7 +12,7 @@ body {
 }
 div {
   vertical-align: top;
-  font-family: 'Marck Script', 'Comic Sans MS', cursive;
+  font-family: 'Marck Script', cursive;
   font-weight: bold;
   touch-action: manipulation;
 }

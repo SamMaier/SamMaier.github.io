@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="../manifest.webmanifest">
     <title>Pickleball Schedule Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,6 +24,7 @@
         <div id="schedule-output"></div>
     </div>
     <script src="app.js"></script>
+    <script src="../offline.js"></script>
     <script>
         document.getElementById('generate-btn').addEventListener('click', () => {
             const playerNames = document.getElementById('players').value.split(',').map(name => name.trim());

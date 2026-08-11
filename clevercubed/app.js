@@ -1,832 +1,372 @@
+
 var selected = null;
-var multiplier = 1;
+var multiplier = 1; // Note: Green area multipliers are handled differently now.
 var numFoxes = 0;
 var isBeforeUnloadRegistered = false;
 
-// --- Clever Cubed specific state ---
-var activeDieColor = '';       // 'yellow', 'turquoise', 'blue', 'brown', 'pink'
-var ccSelectMode = '';         // 'field', 'platter-input', 'yellow-active', 'yellow-passive'
-var activeFieldValue = 0;      // value of die on selected field
-var dieFields = [null, null, null]; // {color, value} for fields I, II, III
-var platterDice = [];          // array of {color, value} on silver platter
-var platterMaxBoxes = 18;      // max boxes on platter grid
-var bonusChainActive = false;  // for chaining 7 bonuses
-var roundCrossed = 0;          // how many rounds crossed (0-6)
-var pinkInput = new Array(13).fill(null); // values entered in pink boxes (1-indexed)
-var blueLeftTrack = new Array(7).fill(null); // [1]..[6] left of center
-var blueRightTrack = new Array(6).fill(null); // [8]..[12] right of center
-var brownSkipped = new Array(13).fill(false); // [1]..[12] skipped brown boxes
+// --- Scoring for Silver Area (formerly Yellow in original) ---
+function calcSilver() {
+  let total = 0;
+  const silverPointsPerRowMap = [0, 2, 4, 7, 11, 16, 22]; // Points for 0 to 6 marked squares in a row
 
-// --- Sun scoring for Yellow: [crosses] -> points per row ---
-var yellowSunScores = [0, 5, 10, 20, 42]; // 0-6 crosses
-
-// --- Turquoise scoring: crosses per row -> points ---
-var turqRowScores = [0, 2, 6, 12, 24, 40, 55, 70, 85, 100, 105];
-
-// --- Blue track scoring ---
-var blueBonusValues = [2, 3, 4, 10, 11, 12]; // extra +4 each
-
-// --- Brown scoring: total crosses -> points ---
-var brownScores = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 90];
-
-// Track last crossed brown index for left-to-right constraint
-var brownLastCrossed = 0;
-
-// Turquoise combo state
-var ccTurquoiseCrossesRemaining = 0;
-
-// ========================================
-//  Interaction Functions
-// ========================================
-
-function selectDie(color, value) {
-  activeDieColor = color;
-  activeFieldValue = value;
-
-  // Set up mode based on die color
-  if (color === 'turquoise') {
-    ccSelectMode = 'turquoise-combo';
-    ccTurquoiseCrossesRemaining = countTurquoiseMatches();
-  } else if (color === 'yellow') {
-    ccSelectMode = 'yellow-active';
-  } else if (color === 'brown') {
-    ccSelectMode = 'brown';
-  } else {
-    ccSelectMode = '';
-  }
-
-  turnOffModal();
-  updateScore();
-}
-
-function activeFieldClick(fieldEl) {
-  if (!activeDieColor) {
-    var modal = document.getElementById("mainmodal");
-    modal.style.display = "flex";
-    selected = fieldEl;
-    ccSelectMode = 'field';
-    for (var i = 1; i <= 12; i++) {
-      var id = "sq" + i;
-      var el = document.getElementById(id);
-      if (i > 6) {
-        el.style.display = "none";
-      } else {
-        el.innerHTML = i;
-        el.style.display = "block";
-      }
-    }
-    return;
-  }
-  var fieldIdx = -1;
-  if (fieldEl.id === 'field-I') fieldIdx = 0;
-  else if (fieldEl.id === 'field-II') fieldIdx = 1;
-  else if (fieldEl.id === 'field-III') fieldIdx = 2;
-
-  if (fieldIdx !== -1 && dieFields[fieldIdx] === null) {
-    dieFields[fieldIdx] = { color: activeDieColor, value: activeFieldValue };
-    fieldEl.innerHTML = activeFieldValue;
-    fieldEl.classList.add('cc-dice-filled');
-    fieldEl.style.borderColor = 'white';
-    activeDieColor = '';
-    activeFieldValue = 0;
-    ccSelectMode = '';
-    updateScore();
-  }
-}
-
-function platterClick(platterEl) {
-  var box = platterEl;
-  if (box.classList.contains('cc-platter-box')) {
-    if (box.classList.contains('strikethrough')) {
-      box.classList.remove('strikethrough');
-      box.classList.remove('cc-platter-marked');
-      box.innerHTML = box.dataset.value || '';
-      updateScore();
-      return;
-    }
-  }
-  var modal = document.getElementById("mainmodal");
-  modal.style.display = "flex";
-  selected = platterEl;
-  ccSelectMode = 'platter';
-  for (var i = 1; i <= 6; i++) {
-    var id = "sq" + i;
-    var el = document.getElementById(id);
-    el.innerHTML = i;
-    el.style.display = "block";
-  }
-}
-
-function platterMarkClick(boxEl) {
-  if (boxEl.classList.contains('strikethrough')) return;
-  boxEl.classList.add('strikethrough');
-  boxEl.classList.add('cc-platter-marked');
-  boxEl.innerHTML = '✗';
-  updateScore();
-}
-
-// ========================================
-//  Strikethrough handlers
-// ========================================
-
-function strikethrough(element) {
-  var id = element.id || '';
-
-  // --- Turquoise combo ---
-  if (element.classList.contains('cc-sq-tc') && ccSelectMode === 'turquoise-combo') {
-    if (!element.classList.contains('strikethrough')) {
-      element.classList.add('strikethrough');
-      ccTurquoiseCrossesRemaining--;
-      if (ccTurquoiseCrossesRemaining <= 0) {
-        ccSelectMode = '';
-      }
-    } else {
-      element.classList.remove('strikethrough');
-      ccTurquoiseCrossesRemaining++;
-    }
-    turnOffModal();
-    return;
-  }
-
-  // --- Yellow with row restriction ---
-  if (id.match(/^y[0-9]+$/) && !element.classList.contains('cc-sq-bc')) {
-    if (ccSelectMode === 'yellow-active') {
-      var activeFieldIdx = -1;
-      if (activeDieColor === 'yellow') {
-        for (var f = 0; f < 3; f++) {
-          if (dieFields[f] && dieFields[f].value === activeFieldValue) {
-            activeFieldIdx = f;
-            break;
-          }
+  let foxSquares = 0
+  // There are 4 rows in the silver area, each with 6 squares.
+  // Row 1: s1-s6
+  // Row 2: s7-s12
+  // Row 3: s13-s18
+  // Row 4: s19-s24
+  for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+    let markedInRow = 0;
+    for (let colIndex = 1; colIndex <= 6; colIndex++) {
+      const squareId = "s" + (rowIndex * 6 + colIndex);
+      const squareElement = document.getElementById(squareId);
+      if (squareElement && squareElement.classList.contains("strikethrough")) {
+        if (colIndex === 3) {
+          foxSquares++;
         }
-      }
-      var boxNum = parseInt(id.replace('y', ''));
-      var boxRow = Math.ceil(boxNum / 6);
-      var activeRow = activeFieldIdx + 1;
-
-      if (boxRow !== activeRow) {
-        element.style.backgroundColor = '#ff0';
-        setTimeout(function() { element.style.backgroundColor = 'white'; }, 300);
-        return;
+        markedInRow++;
       }
     }
-    // Passive mode: only grey boxes allowed
-    if (ccSelectMode === 'yellow-passive') {
-      if (element.classList.contains('yellow-white')) {
-        element.style.backgroundColor = '#ff0';
-        setTimeout(function() { element.style.backgroundColor = 'white'; }, 300);
-        return;
-      }
-    }
-    // Normal toggle
-    element.classList.toggle("strikethrough");
-
-    if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
-      element.style.display = 'none';
-      element.offsetHeight;
-      element.style.display = '';
-    }
-
-    checkYellowBonuses();
-    updateScore();
-    return;
+    total += silverPointsPerRowMap[Math.min(markedInRow, 6)] || 0;
   }
 
-  // --- Brown left-to-right constraint ---
-  if (id.match(/^br[0-9]+$/)) {
-    var boxNum = parseInt(id.replace('br', ''));
-    if (brownSkipped[boxNum]) return;
-
-    if (!element.classList.contains('strikethrough')) {
-      if (boxNum > brownLastCrossed) {
-        for (var s = brownLastCrossed + 1; s < boxNum; s++) {
-          brownSkipped[s] = true;
-        }
-        brownLastCrossed = boxNum;
-        element.classList.add("strikethrough");
-
-        if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
-          element.style.display = 'none';
-          element.offsetHeight;
-          element.style.display = '';
-        }
-
-        checkBrownBonuses();
-        updateScore();
-      } else if (boxNum <= brownLastCrossed) {
-        element.classList.toggle("strikethrough");
-
-        if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
-          element.style.display = 'none';
-          element.offsetHeight;
-          element.style.display = '';
-        }
-        updateScore();
-      }
-    } else {
-      element.classList.toggle("strikethrough");
-      updateScore();
-    }
-    return;
+  if (foxSquares === 4) {
+    numFoxes++;
   }
 
-  // --- Default strikethrough ---
-  element.classList.toggle("strikethrough");
-
-  if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
-    element.style.display = 'none';
-    element.offsetHeight;
-    element.style.display = '';
-  }
-  updateScore();
+  document.getElementById("greypoints").innerHTML = total.toString();
+  return total;
 }
 
-// ========================================
-//  Blue track handlers
-// ========================================
-
-function blueBoxClick(el) {
-  if (el.dataset.value !== undefined) return;
-
-  selected = el;
-  ccSelectMode = 'blue';
-
-  var modal = document.getElementById("mainmodal");
-  modal.style.display = "flex";
-
-  for (var i = 2; i <= 12; i++) {
-    var id = "sq" + i;
-    var box = document.getElementById(id);
-    box.innerHTML = i;
-    box.style.fontSize = '1.4rem';
-    box.style.display = "block";
-  }
-  var unusedBox = document.getElementById("sq1");
-  if (unusedBox) unusedBox.style.display = 'none';
-}
-
-function blueNumberpicked(value) {
-  if (!selected) return;
-  var id = selected.id;
-
-  if (id.startsWith('blue-l')) {
-    var idx = parseInt(id.replace('blue-l', ''));
-    var centerFilled = document.getElementById('blue-center').dataset.value !== undefined;
-    var rightFilled = false;
-    if (idx < 6) {
-      var rightEl = document.getElementById('blue-l' + (idx + 1));
-      rightFilled = rightEl && rightEl.dataset.value !== undefined;
-    }
-    if (!centerFilled && !rightFilled) {
-      selected.style.backgroundColor = '#f44';
-      setTimeout(function() { selected.style.backgroundColor = 'white'; }, 400);
-      turnOffModal();
-      return;
-    }
-    blueLeftTrack[idx] = value;
-  }
-
-  if (id.startsWith('blue-r')) {
-    var idx2 = parseInt(id.replace('blue-r', ''));
-    var centerFilled2 = document.getElementById('blue-center').dataset.value !== undefined;
-    var leftFilled2 = false;
-    if (idx2 > 8) {
-      var leftEl2 = document.getElementById('blue-r' + (idx2 - 1));
-      leftFilled2 = leftEl2 && leftEl2.dataset.value !== undefined;
-    }
-    if (!centerFilled2 && !leftFilled2) {
-      selected.style.backgroundColor = '#f44';
-      setTimeout(function() { selected.style.backgroundColor = 'white'; }, 400);
-      turnOffModal();
-      return;
-    }
-    blueRightTrack[idx2 - 7] = value;
-  }
-
-  if (id === 'blue-center') {
-    blueLeftTrack = new Array(7).fill(null);
-    blueRightTrack = new Array(6).fill(null);
-    var centerEl = document.getElementById('blue-center');
-    centerEl.innerHTML = '7';
-    delete centerEl.dataset.value;
-    var allBoxes = document.querySelectorAll('.cc-blue-box');
-    for (var b = 0; b < allBoxes.length; b++) {
-      if (allBoxes[b].id !== 'blue-center') {
-        allBoxes[b].innerHTML = allBoxes[b].id.replace(/[^0-9]/g, '');
-        delete allBoxes[b].dataset.value;
-      }
-    }
-    selected.dataset.value = value;
-    selected.innerHTML = value;
-    turnOffModal();
-    updateScore();
-    return;
-  }
-
-  selected.dataset.value = value;
-  selected.innerHTML = value;
-  turnOffModal();
-  updateScore();
-}
-
-// ========================================
-//  Pink box handlers
-// ========================================
-
-function pinkBoxClick(el) {
-  if (el.dataset.value !== undefined) return;
-
-  selected = el;
-  ccSelectMode = 'pink';
-
-  if (!selected.dataset.originalText) {
-    selected.dataset.originalText = selected.innerHTML || '';
-  }
-
-  var modal = document.getElementById("mainmodal");
-  modal.style.display = "flex";
-
-  var multEl = el.parentElement.querySelector('.cc-pink-multiplier');
-  var multVal = multEl ? parseInt(multEl.dataset.mult) : 2;
-
-  for (var i = 1; i <= 6; i++) {
-    var id = "sq" + i;
-    var box = document.getElementById(id);
-    var halved = Math.ceil(i / 2);
-    var multResult = i * multVal;
-
-    if (i <= 3) {
-      box.innerHTML = i + '→' + halved;
-    } else {
-      box.innerHTML = i + '→' + multResult;
-    }
-    box.style.fontSize = '1.1rem';
-    box.style.display = "block";
-    box.style.whiteSpace = "nowrap";
-  }
-}
-
-function pinkNumberpicked(elementFromModal) {
-  if (!selected) return;
-  var pickedText = elementFromModal.innerHTML;
-
-  if (pickedText.length === 0) {
-    if (selected.dataset.originalText) {
-      selected.innerHTML = selected.dataset.originalText;
-    } else {
-      selected.innerHTML = '';
-    }
-    selected.style.color = 'inherit';
-    delete selected.dataset.value;
-    var pinkIdx = parseInt(selected.id.replace('p', ''));
-    pinkInput[pinkIdx] = null;
-    turnOffModal();
-    return;
-  }
-
-  var parts = pickedText.split('→');
-  var rawDie = parseInt(parts[0]);
-  var chosenResult = parseInt(parts[1]);
-
-  var pinkIdx = parseInt(selected.id.replace('p', ''));
-  pinkInput[pinkIdx] = chosenResult;
-  selected.innerHTML = chosenResult;
-  selected.dataset.value = chosenResult;
-  selected.style.color = 'black';
-
-  turnOffModal();
-}
-
-// ========================================
-//  Number Picker Modal
-// ========================================
-
-function numberpicked(elementFromModal) {
-  if (!selected) return;
-  var pickedValue = elementFromModal.innerHTML;
-
-  if (pickedValue.length === 0) {
-    if (selected.dataset.originalText) {
-      selected.innerHTML = selected.dataset.originalText;
-    } else {
-      selected.innerHTML = "";
-    }
-    selected.style.color = "inherit";
-    delete selected.dataset.value;
-    if (ccSelectMode === 'pink') {
-      var pinkIndex = parseInt(selected.id.replace('p', ''));
-      pinkInput[pinkIndex] = null;
-    }
-  } else {
-    var numericValue = parseInt(pickedValue);
-
-    if (ccSelectMode === 'field') {
-      selectDie(activeDieColor, numericValue);
-      return;
-    }
-
-    if (ccSelectMode === 'platter') {
-      placeDieFromPlatter(numericValue);
-      return;
-    }
-
-    if (ccSelectMode === 'pink') {
-      pinkNumberpicked(elementFromModal);
-      return;
-    }
-
-    if (ccSelectMode === 'blue') {
-      blueNumberpicked(numericValue);
-      return;
-    }
-  }
-  turnOffModal();
-}
-
-function placeDieFromPlatter(value) {
-  var color = activeDieColor;
-  activeDieColor = '';
-  activeFieldValue = value;
-
-  if (platterDice.length < platterMaxBoxes) {
-    var box = document.createElement('div');
-    box.className = 'cc-platter-box';
-    box.innerHTML = value;
-    box.style.position = 'relative';
-    platterDice.push({ color: color, value: value, el: box });
-    box.dataset.color = color;
-    box.dataset.value = value;
-    document.getElementById('platter').appendChild(box);
-    box.onclick = function() { platterMarkClick(this); };
-    updateScore();
-  }
-}
-
-// ========================================
-//  Circle handler
-// ========================================
-
-function circle(element) {
-  var isCircle = element.classList.contains('circle');
-  if (isCircle) {
-    var colorProperty = "borderColor";
-    if (element.style[colorProperty] == "white" || element.style[colorProperty] == "" || element.style[colorProperty] == null) {
-      element.style[colorProperty] = "black";
-    } else {
-      element.style[colorProperty] = "white";
-    }
-  }
-  updateScore();
-}
-
-// ========================================
-//  Bonus Action handler
-// ========================================
-
-function bonusAction(el) {
-  if (!el.classList.contains('strikethrough')) {
-    el.classList.add('strikethrough');
-    updateScore();
-  }
-}
-
-function roundCross(el) {
-  if (!el.classList.contains('strikethrough')) {
-    el.classList.add('strikethrough');
-    roundCrossed++;
-    if (roundCrossed <= 4) {
-      bonusChainActive = true;
-    }
-    updateScore();
-  }
-}
-
-// ========================================
-//  Combo Helpers for Turquoise
-// ========================================
-
-function countTurquoiseMatches() {
-  var count = 1;
-  for (var i = 0; i < 3; i++) {
-    if (dieFields[i] && dieFields[i].color === activeDieColor && dieFields[i].value === activeFieldValue) {
-      count++;
-    }
-  }
-  for (var i = 0; i < platterDice.length; i++) {
-    if (platterDice[i].color === activeDieColor && platterDice[i].value === activeFieldValue) {
-      count++;
-    }
-  }
-  return Math.min(count, 6);
-}
-
-// ========================================
-//  Score Calculation Functions
-// ========================================
-
+// --- Scoring for Yellow Area (formerly Blue in original) ---
 function calcYellow() {
-  var total = 0;
-  var crossesPerRow = [0, 0, 0]; // Row I (y1-y6), Row II (y7-y12), Row III (y13-y18)
+  let checkedCount = 0;
+  const yellowSquares = document.querySelectorAll('.yellowshadow .square'); // All squares in yellow area
+  yellowSquares.forEach(sq => {
+    if (sq.classList.contains('strikethrough')) {
+      checkedCount++;
+     }
+   });
 
-  for (var row = 1; row <= 3; row++) {
-    for (var col = 1; col <= 6; col++) {
-      var boxNum = (row - 1) * 6 + col;
-      var id = "y" + boxNum;
-      var el = document.getElementById(id);
-      if (el && el.classList.contains('strikethrough')) {
-        crossesPerRow[row - 1]++;
-      }
-    }
-    var crosses = crossesPerRow[row - 1];
-    total += yellowSunScores[Math.min(crosses, 6)] || 0;
+  const yellowPointsMap = [0, 3, 10, 21, 36, 55, 75, 96, 118, 141, 165]; // For 0 to 10 checked squares
+  let total = yellowPointsMap[Math.min(checkedCount, yellowPointsMap.length - 1)] || 0;
+
+  document.getElementById("yellowpoints").innerHTML = total.toString();
+  const allHaveOutline =
+    document.getElementById('y8')?.style.outlineColor === "black" &&
+    document.getElementById('y9')?.style.outlineColor === "black" &&
+    document.getElementById('y10')?.style.outlineColor === "black";
+  if (allHaveOutline) {
+    numFoxes++;
   }
-
-  // Update individual row scores
-  var rowTotal = 0;
-  for (var row = 1; row <= 3; row++) {
-    var crosses = crossesPerRow[row - 1];
-    rowTotal += yellowSunScores[Math.min(crosses, 6)] || 0;
-  }
-  document.getElementById("cc-yellow-total").innerHTML = rowTotal.toString();
-  document.getElementById("cc-yellow-score").innerHTML = rowTotal.toString();
-
-  return rowTotal;
-}
-
-function calcTurquoise() {
-  var total = 0;
-  var crossesPerRow = [0, 0, 0, 0, 0];
-
-  for (var row = 1; row <= 5; row++) {
-    var boxes = document.querySelectorAll('#turq-row-' + row + ' .cc-sq-tc');
-    for (var i = 0; i < boxes.length; i++) {
-      if (boxes[i].classList.contains('strikethrough')) {
-        crossesPerRow[row - 1]++;
-      }
-    }
-    var crosses = crossesPerRow[row - 1];
-    total += turqRowScores[Math.min(crosses, 6)] || 0;
-  }
-
-  document.getElementById("cc-turquoise-total").innerHTML = total.toString();
-  document.getElementById("cc-turquoise-score").innerHTML = total.toString();
   return total;
 }
 
+// --- Scoring for Blue Area (formerly Green in original) ---
 function calcBlue() {
-  var total = 0;
-  var bonusCount = 0;
-
-  var leftOuter = null;
-  for (var i = 1; i <= 6; i++) {
-    if (blueLeftTrack[i] !== null) {
-      leftOuter = blueLeftTrack[i];
+  let total = 0;
+  let checkedCount = 0;
+  for (let i = 1; i <= 12; i++) {
+    const id = "b" + i; // IDs are b1-b12 in blue area
+    const ele = document.getElementById(id);
+    if (ele) {
+      const numberVal = parseInt(ele.dataset.value || "0");
+      if (Number.isInteger(numberVal) && numberVal > 0) {
+        checkedCount++;
+      }
     }
   }
+  const bluePointsMap = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78]; // For 0 to 12 checked
+  total = bluePointsMap[Math.min(checkedCount, 12)] || 0;
 
-  var rightOuter = null;
-  for (var i = 0; i < 5; i++) {
-    if (blueRightTrack[i] !== null) {
-      rightOuter = blueRightTrack[i] + 7;
-    }
+  if (total >= 45) {
+    numFoxes++;
   }
 
-  var centerEl = document.getElementById('blue-center');
-  var centerVal = centerEl && centerEl.dataset.value ? parseInt(centerEl.dataset.value) : null;
-
-  if (leftOuter !== null) {
-    total += leftOuter;
-    if (blueBonusValues.indexOf(leftOuter) !== -1) bonusCount++;
-  }
-  if (centerVal !== null) {
-    total += centerVal;
-    if (blueBonusValues.indexOf(centerVal) !== -1) bonusCount++;
-  }
-  if (rightOuter !== null) {
-    total += rightOuter;
-    if (blueBonusValues.indexOf(rightOuter) !== -1) bonusCount++;
-  }
-
-  for (var i = 1; i <= 6; i++) {
-    if (blueLeftTrack[i] !== null && blueBonusValues.indexOf(blueLeftTrack[i]) !== -1) bonusCount++;
-  }
-  for (var i = 0; i < 5; i++) {
-    var rv = blueRightTrack[i] + 7;
-    if (rv !== null && blueBonusValues.indexOf(rv) !== -1) bonusCount++;
-  }
-
-  total += bonusCount * 4;
-
-  document.getElementById("cc-blue-total").innerHTML = total.toString();
+  document.getElementById("bluepoints").innerHTML = total.toString();
   return total;
 }
 
-function calcBrown() {
-  var total = 0;
-  var crosses = 0;
+function calcGreen() {
+  let total = 0;
+  const pairs = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]];
 
-  for (var i = 1; i <= 12; i++) {
-    var el = document.getElementById('br' + i);
-    if (el && el.classList.contains('strikethrough')) {
-      crosses++;
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
+    const ele1 = document.getElementById("g" + pair[0]);
+    const ele2 = document.getElementById("g" + pair[1]);
+    let scoreForPair = 0;
+
+    if (ele1) {
+      const val1 = parseInt(ele1.dataset.value || "0");
+
+      if (pair[0] === 7 && val1 > 0) { // Fox is in the g7/g8 pair
+        numFoxes++;
+      }
+      if (ele2) {
+        const val2 = parseInt(ele2.dataset.value || "0");
+
+        if (val1 > 0 && val2 > 0) {
+          scoreForPair = val1 - val2;
+        }
+      }
     }
+
+    const scoreElement = document.getElementById("g-score-" + (i + 1));
+    if (scoreElement) {
+      scoreElement.innerHTML = scoreForPair.toString();
+    }
+    total += scoreForPair;
   }
 
-  total = brownScores[Math.min(crosses, 12)] || 0;
-
-  document.getElementById("cc-brown-total").innerHTML = total.toString();
-  document.getElementById("cc-brown-score").innerHTML = total.toString();
+  document.getElementById("greenpoints").innerHTML = total.toString();
   return total;
 }
 
+// --- Scoring for Pink Area (formerly Purple in original) ---
 function calcPink() {
-  var total = 0;
-
-  for (var i = 1; i <= 12; i++) {
-    if (pinkInput[i] !== null) {
-      total += pinkInput[i];
+  let total = 0;
+  for (let i = 1; i <= 12; i++) {
+    const id = "p" + i;
+    const ele = document.getElementById(id);
+    if (ele) {
+      const numberVal = parseInt(ele.dataset.value || "0"); // Assuming entered value is stored in data-value
+      if (Number.isInteger(numberVal) && numberVal > 0) {
+        total += numberVal;
+      }
+      // Fox: If p8 has a value (fox icon is under p8).
+      if (i === 8 && Number.isInteger(numberVal) && numberVal > 0) {
+        numFoxes++;
+      }
     }
   }
-
-  document.getElementById("cc-pink-total").innerHTML = total.toString();
-  document.getElementById("cc-pink-score").innerHTML = total.toString();
+  document.getElementById("pinkpoints").innerHTML = total.toString();
   return total;
 }
-
-// ========================================
-//  Main Score Update
-// ========================================
 
 function updateScore() {
   if (!isBeforeUnloadRegistered) {
     window.addEventListener('beforeunload', function (event) {
       event.preventDefault();
-      event.returnValue = '';
+      event.returnValue = ''; // Required for some browsers.
     });
     isBeforeUnloadRegistered = true;
   }
 
-  numFoxes = 0;
+  numFoxes = 0; // Reset before recalculating
 
-  var yellow = calcYellow();
-  var turquoise = calcTurquoise();
-  var blue = calcBlue();
-  var brown = calcBrown();
-  var pink = calcPink();
-
-  // Fox multiplier: lowest area score × numFoxes
-  var foxValue = Math.min(yellow, turquoise, blue, brown, pink);
-
-  // Count foxes from crossed bonus elements
-  var foxElements = document.querySelectorAll('.fox:not(.foxbelow):not(.foxbelo)');
-  for (var i = 0; i < foxElements.length; i++) {
-    if (foxElements[i].classList.contains('strikethrough')) {
-      numFoxes++;
-    }
+  if (document.getElementById("fox-circle").style.borderColor === "black") {
+    numFoxes++;
   }
 
-  // Also count from circle tracks
-  var foxCircle = document.getElementById('fox-circle');
-  if (foxCircle && foxCircle.style.borderColor === 'black') {
-    numFoxes++;
+  // Call new calculation functions
+  let silverScore = calcSilver();
+  let yellowScore = calcYellow();
+  let blueScore = calcBlue();
+  let greenScore = calcGreen();
+  let pinkScore = calcPink();
+
+  // Fox scoring: numFoxes is incremented in individual calc functions.
+  // The lowest score among all colors is the value for each fox.
+  let foxValue = Math.min(silverScore, yellowScore, blueScore, greenScore, pinkScore);
+  if (foxValue === silverScore) {
+    foxStyleClass = "foxs"
+  } else if (foxValue === yellowScore) {
+    foxStyleClass = "foxy"
+  } else if (foxValue === blueScore) {
+    foxStyleClass = "foxb"
+  } else if (foxValue === greenScore) {
+    foxStyleClass = "foxg"
+  } else {
+    foxStyleClass = "foxp"
+  }
+
+  // Update fox display
+  // The individual fox icons on the board are now styled generically as grey.
+  // We only update the total fox score display at the bottom.
+  let allFoxElements = document.getElementsByClassName("fox")
+  for (let el of allFoxElements) {
+    classes = el.className.split(" ")
+    newClasses = ""
+    for (let j = 0; j < classes.length; j++) {
+      if (!(classes[j].startsWith("fox") && classes[j].length === 4)) {
+        // Only readding the classes that arent like "foxp" or "foxs"
+        newClasses += classes[j] + " "
+      }
+    }
+    newClasses += foxStyleClass
+    el.className = newClasses
+    el.children[0].innerHTML = foxValue.toString()
   }
 
   document.getElementById("foxmultiplier").innerHTML = numFoxes.toString() + "x";
 
-  var totalScore = yellow + turquoise + blue + brown + pink + (numFoxes * foxValue);
-  document.getElementById("totalScore").innerHTML = totalScore.toString();
+  let totalScoreVal = silverScore + yellowScore + blueScore + greenScore + pinkScore + (numFoxes * foxValue);
+  document.getElementById("totalScore").innerHTML = totalScoreVal.toString();
 }
 
-// ========================================
-//  Bonus Checking for Yellow
-// ========================================
+function numberpicked(elementFromModal) {
+  if (!selected) return;
 
-function checkYellowBonuses() {
-  // Bonuses between Row I and Row II
-  // Bonus at col 2: needs y2 (Row I) and y8 (Row II) crossed
-  checkYellowBonus('y2', 'y8', null); // +1
-  checkYellowBonus('y4', 'y10', 'yellowbonus'); // ?
-  checkYellowBonus('y4', 'y10', 'blackbonus'); // 🔓 (the middle one)
-  checkYellowBonus('y2', 'y8', 'fox'); // Fox
-  checkYellowBonus('y4', 'y10', 'blackbonus'); // ↻
-  checkYellowBonus('y6', 'y12', 'blackbonus'); // +1
+  const pickedValue = elementFromModal.innerHTML;
 
-  // Bonuses between Row II and Row III
-  checkYellowBonus('y7', 'y13', 'bluebonus'); // ?
-  checkYellowBonus('y7', 'y13', 'blackbonus'); // 🔓
-  checkYellowBonus('y9', 'y15', 'greybonus'); // ?
-  checkYellowBonus('y11', 'y17', 'greenbonus'); // ?
-  checkYellowBonus('y12', 'y18', 'pinkbonus'); // ?
-  checkYellowBonus('y12', 'y18', 'blackbonus'); // ↻
-}
+  if (pickedValue.length === 0) { // Clear box
+    selected.innerHTML = selected.dataset.originalText || ""; // Restore original text (like x2, >=3)
+    selected.style.color = "inherit";
+    delete selected.dataset.value; // Clear stored value
+  } else {
+    const numericValue = parseInt(pickedValue);
+    selected.dataset.value = numericValue; // Store the actual numeric value
 
-function checkYellowBonus(aboveId, belowId, bonusClass) {
-  var aboveEl = document.getElementById(aboveId);
-  var belowEl = document.getElementById(belowId);
-  if (!aboveEl || !belowEl) return;
-  if (!aboveEl.classList.contains('strikethrough') || !belowEl.classList.contains('strikethrough')) return;
+    // Display the number in the box
+    selected.innerHTML = numericValue;
+    selected.style.color = "black";
 
-  // Find matching bonus element
-  var bonusRows = document.querySelectorAll('.surroundingbox.greyshadow .row');
-  for (var r = 0; r < bonusRows.length; r++) {
-    var bonuses = bonusRows[r].querySelectorAll('.bonusbox, .points');
-    for (var b = 0; b < bonuses.length; b++) {
-      var bonus = bonuses[b];
-      if (bonusClass) {
-        var classes = bonus.className;
-        if (classes.indexOf(bonusClass) === -1) continue;
-      }
-      if (!bonus.classList.contains('strikethrough')) {
-        bonus.classList.add('strikethrough');
-        if (bonus.classList.contains('fox')) {
-          numFoxes++;
-        }
-      }
-    }
-  }
-}
-
-// ========================================
-//  Bonus Checking for Brown
-// ========================================
-
-function checkBrownBonuses() {
-  // Brown bonuses are between adjacent boxes
-  // br1-br2: ↻, br2-br3: +1, br3-br4: blue ?, br4-br5: 🔓
-  // br5-br6: yellow ?, br6-br7: ↻, br7-br8: fox, br8-br9: grey ?
-  // br9-br10: +1, br10-br11: green ?, br11-br12: pink ?
-  var bonusPairs = [
-    ['br1', 'br2', null],   // ↻ (already crossed on first of pair)
-    ['br2', 'br3', null],   // +1
-    ['br3', 'br4', 'bluebonus'],
-    ['br4', 'br5', 'blackbonus'], // 🔓
-    ['br5', 'br6', 'yellowbonus'],
-    ['br6', 'br7', 'blackbonus'], // ↻
-    ['br7', 'br8', 'fox'],
-    ['br8', 'br9', 'greybonus'],
-    ['br9', 'br10', 'blackbonus'], // +1
-    ['br10', 'br11', 'greenbonus'],
-    ['br11', 'br12', 'pinkbonus']
-  ];
-
-  for (var i = 0; i < bonusPairs.length; i++) {
-    var leftId = bonusPairs[i][0];
-    var rightId = bonusPairs[i][1];
-    var bonusType = bonusPairs[i][2];
-    var leftEl = document.getElementById(leftId);
-    var rightEl = document.getElementById(rightId);
-    if (!leftEl || !rightEl) continue;
-    if (!leftEl.classList.contains('strikethrough') || !rightEl.classList.contains('strikethrough')) continue;
-
-    // Find the bonus between these boxes
-    var leftParent = leftEl.parentElement;
-    if (!leftParent) continue;
-    var siblings = leftParent.children;
-    for (var s = 0; s < siblings.length; s++) {
-      if (siblings[s] === leftEl) {
-        if (s + 1 < siblings.length && siblings[s + 1].className && siblings[s + 1].className.indexOf('bonusbox') !== -1) {
-          var bonus = siblings[s + 1];
-          if (bonusType && bonus.className.indexOf(bonusType) === -1) continue;
-          if (!bonus.classList.contains('strikethrough')) {
-            bonus.classList.add('strikethrough');
-            if (bonus.classList.contains('fox')) {
-              numFoxes++;
+    // Validation for pink area
+    if (selected.id.startsWith("p")) {
+        const conditionText = selected.dataset.originalText || "";
+        const conditionMatch = conditionText.match(/≥(\d)/);
+        if (conditionMatch) {
+            const minVal = parseInt(conditionMatch[1]);
+            if (numericValue < minVal) {
+                console.warn(`Value ${numericValue} for ${selected.id} is less than required ${minVal}`);
             }
+        }
+    }
+  }
+  turnOffModal();
+}
+
+function strikethrough(element) {
+  element.classList.toggle("strikethrough");
+  // Safari hack (from original)
+  if (!navigator.userAgent.includes("Chrome") && navigator.userAgent.includes("Safari")) {
+    element.style.display = 'none';
+    element.offsetHeight; // Trigger reflow
+    element.style.display = '';
+  }
+  updateScore();
+}
+
+function circle(element) {
+  let list = element.classList
+  const isSquare = list.contains("square")
+  const colorProperty = isSquare ? "outlineColor" : "borderColor";
+
+  if (element.style[colorProperty] == "white" || element.style[colorProperty] == "" || element.style[colorProperty] == null) {
+    element.style[colorProperty] = "black";
+    if (isSquare) {
+      element.style.outlineStyle = "solid"
+    }
+  } else {
+    if (list.contains("strikethrough")) {
+      list.remove("strikethrough");
+      element.style[colorProperty] = "white";
+      if (isSquare) {
+        element.style.outlineStyle = "none"
+      }
+    } else {
+      list.add("strikethrough");
+    }
+  }
+
+  updateScore();
+}
+
+function numberbox(element, multipl = 1) {
+  multiplier = multipl;
+  // Store original text if not already stored
+  if (element.dataset.originalText === undefined) {
+    element.dataset.originalText = element.innerHTML;
+  }
+
+  let modal = document.getElementById("mainmodal");
+  modal.style.display = "flex";
+  selected = element;
+
+  const isBlue = element.id.startsWith("b");
+  const maxNumber = isBlue ? 12 : 6;
+
+  document.getElementById("modal-extra-rows").style.display = isBlue ? "block" : "none";
+
+  for (let i = 1; i <= 12; i++) {
+    let id = "sq" + i;
+    el = document.getElementById(id);
+    if ((i > 6 && !isBlue) || i == 1 && isBlue) {
+      el.style.display = "none";
+    } else {
+      el.innerHTML = i * multiplier;
+      el.style.display = "block";
+    }
+  }
+
+  // Special logic for Pink area (>= initial value)
+  if (element.id.startsWith("p")) {
+    const conditionText = element.dataset.originalText || "";
+    const conditionMatch = conditionText.match(/≥(\d)/);
+    if (conditionMatch) {
+        const minVal = parseInt(conditionMatch[1]);
+        for (let i = 1; i <= 6; i++) {
+            if (i * multiplier < minVal) {
+                document.getElementById("sq" + i).style.display = "none";
+            }
+        }
+    }
+  }
+
+  // Special logic for Blue area (<= previous value)
+  if (element.id.startsWith("b")){
+    let prevNumStr = element.id.substring(1);
+    let prevNum = Number(prevNumStr) - 1;
+    if (prevNum > 0) { 
+      const prevBox = document.getElementById("b" + prevNum);
+      if (prevBox && prevBox.dataset.value){
+        const prevVal = Number(prevBox.dataset.value);
+        for (let i = 1; i <= maxNumber; i++) {
+          let el = document.getElementById("sq" + i);
+          if (i * multiplier > prevVal) {
+            el.style.display = "none";
           }
-          break;
         }
       }
     }
   }
 }
 
-// ========================================
-//  Modal & Helper Functions
-// ========================================
+
+function hideScore(element) {
+  // This function seems to be attached to the parent of all score displays.
+  // It should toggle visibility for all individual score elements.
+  const scoreElements = [
+    "greypoints", "yellowpoints", "bluepoints", "greenpoints", "pinkpoints",
+    "foxpoints", "totalScore"
+  ];
+  scoreElements.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) hideScoreImpl(el.classList.contains("pointsnumber") ? el : el.children[0]); // Target the number itself
+  });
+  // Also toggle the fox multiplier
+  const foxMultiplier = document.getElementById("foxmultiplier");
+  if (foxMultiplier) hideScoreImpl(foxMultiplier);
+}
+
+function hideScoreImpl(element) {
+  if (element) {
+    element.classList.toggle("hiddenscore");
+  }
+}
 
 function turnOffModal() {
   document.getElementById("mainmodal").style.display = "none";
   updateScore();
 }
 
-function hideScore(element) {
-  var scoreElements = [
-    "cc-yellow-total", "cc-turquoise-total", "cc-blue-total",
-    "cc-brown-total", "cc-pink-total", "foxpoints", "totalScore"
-  ];
-  scoreElements.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) {
-      el.classList.toggle("hiddenscore");
-    }
-  });
-  var foxMultiplier = document.getElementById("foxmultiplier");
-  if (foxMultiplier) foxMultiplier.classList.toggle("hiddenscore");
-}
-
 window.onclick = function(event) {
-  var modal = document.getElementById("mainmodal");
+  let modal = document.getElementById("mainmodal");
   if (event.target == modal) {
     turnOffModal();
   }
 }
+
+// Initial score update on load, if needed (or call when game starts)
+// updateScore(); 

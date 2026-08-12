@@ -7,139 +7,110 @@ var isBeforeUnloadRegistered = false;
 // --- Scoring for Silver Area (formerly Yellow in original) ---
 function calcSilver() {
   let total = 0;
-  const silverPointsPerRowMap = [0, 2, 4, 7, 11, 16, 22]; // Points for 0 to 6 marked squares in a row
+  const yellowPointsPerRow = [0, 2, 6, 12, 20, 30, 42];
 
-  let foxSquares = 0
-  // There are 4 rows in the silver area, each with 6 squares.
-  // Row 1: s1-s6
-  // Row 2: s7-s12
-  // Row 3: s13-s18
-  // Row 4: s19-s24
-  for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+  for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
     let markedInRow = 0;
     for (let colIndex = 1; colIndex <= 6; colIndex++) {
       const squareId = "s" + (rowIndex * 6 + colIndex);
       const squareElement = document.getElementById(squareId);
       if (squareElement && squareElement.classList.contains("strikethrough")) {
-        if (colIndex === 3) {
-          foxSquares++;
-        }
         markedInRow++;
       }
     }
-    total += silverPointsPerRowMap[Math.min(markedInRow, 6)] || 0;
+    total += yellowPointsPerRow[markedInRow];
   }
 
-  if (foxSquares === 4) {
+  if (document.getElementById("s6")?.classList.contains("strikethrough")) {
     numFoxes++;
   }
 
-  document.getElementById("greypoints").innerHTML = total.toString();
+  document.getElementById("yellowpoints").innerHTML = total.toString();
   return total;
 }
 
 // --- Scoring for Yellow Area (formerly Blue in original) ---
 function calcYellow() {
-  let checkedCount = 0;
-  const yellowSquares = document.querySelectorAll('.yellowshadow .square'); // All squares in yellow area
-  yellowSquares.forEach(sq => {
-    if (sq.classList.contains('strikethrough')) {
-      checkedCount++;
-     }
-   });
+  let total = 0;
+  const turquoisePointsPerRow = [0, 1, 3, 6, 10, 15, 21];
+  for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
+    let markedInRow = 0;
+    for (let colIndex = 1; colIndex <= 6; colIndex++) {
+      const square = document.getElementById("b" + (rowIndex * 6 + colIndex));
+      if (square?.classList.contains("strikethrough")) {
+        markedInRow++;
+      }
+    }
+    total += turquoisePointsPerRow[markedInRow];
+  }
 
-  const yellowPointsMap = [0, 3, 10, 21, 36, 55, 75, 96, 118, 141, 165]; // For 0 to 10 checked squares
-  let total = yellowPointsMap[Math.min(checkedCount, yellowPointsMap.length - 1)] || 0;
-
-  document.getElementById("yellowpoints").innerHTML = total.toString();
-  const allHaveOutline =
-    document.getElementById('y8')?.style.outlineColor === "black" &&
-    document.getElementById('y9')?.style.outlineColor === "black" &&
-    document.getElementById('y10')?.style.outlineColor === "black";
-  if (allHaveOutline) {
+  if (document.getElementById("b6")?.classList.contains("strikethrough")) {
     numFoxes++;
   }
+  document.getElementById("tealpoints").innerHTML = total.toString();
   return total;
 }
 
 // --- Scoring for Blue Area (formerly Green in original) ---
 function calcBlue() {
   let total = 0;
-  let checkedCount = 0;
-  for (let i = 1; i <= 12; i++) {
-    const id = "b" + i; // IDs are b1-b12 in blue area
-    const ele = document.getElementById(id);
-    if (ele) {
-      const numberVal = parseInt(ele.dataset.value || "0");
-      if (Number.isInteger(numberVal) && numberVal > 0) {
-        checkedCount++;
-      }
-    }
-  }
-  const bluePointsMap = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78]; // For 0 to 12 checked
-  total = bluePointsMap[Math.min(checkedCount, 12)] || 0;
+  const boxes = Array.from({length: 12}, (_, index) => document.getElementById("p" + (index + 1)));
+  const printedScores = [22, 17, 13, 9, 6, 3, 3, 6, 9, 13, 17, 22];
+  const bonusValues = new Set([2, 3, 4, 10, 11, 12]);
+  const values = boxes.map(box => parseInt(box?.dataset.value || "0"));
+  const leftmostIndex = values.slice(0, 6).findIndex(value => value > 0);
+  const rightmostIndex = values.slice(6).map((value, index) => ({value, index: index + 6})).reverse().find(item => item.value > 0)?.index;
 
-  if (total >= 45) {
+  if (leftmostIndex >= 0) {
+    total += printedScores[leftmostIndex];
+  }
+  if (rightmostIndex !== undefined) {
+    total += printedScores[rightmostIndex];
+  }
+  values.forEach(value => {
+    if (bonusValues.has(value)) {
+      total += 4;
+    }
+  });
+
+  if (values[11] > 0) {
     numFoxes++;
   }
 
-  document.getElementById("bluepoints").innerHTML = total.toString();
+  document.getElementById("purplepoints").innerHTML = total.toString();
   return total;
 }
 
 function calcGreen() {
-  let total = 0;
-  const pairs = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]];
-
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i];
-    const ele1 = document.getElementById("g" + pair[0]);
-    const ele2 = document.getElementById("g" + pair[1]);
-    let scoreForPair = 0;
-
-    if (ele1) {
-      const val1 = parseInt(ele1.dataset.value || "0");
-
-      if (pair[0] === 7 && val1 > 0) { // Fox is in the g7/g8 pair
-        numFoxes++;
-      }
-      if (ele2) {
-        const val2 = parseInt(ele2.dataset.value || "0");
-
-        if (val1 > 0 && val2 > 0) {
-          scoreForPair = val1 - val2;
-        }
-      }
+  const brownPoints = [0, 2, 5, 9, 14, 20, 27, 35, 44, 54, 65, 77, 90];
+  let crossed = 0;
+  for (let i = 1; i <= 12; i++) {
+    if (document.getElementById("g" + i)?.classList.contains("strikethrough")) {
+      crossed++;
     }
-
-    const scoreElement = document.getElementById("g-score-" + (i + 1));
-    if (scoreElement) {
-      scoreElement.innerHTML = scoreForPair.toString();
-    }
-    total += scoreForPair;
   }
 
-  document.getElementById("greenpoints").innerHTML = total.toString();
+  if (document.getElementById("g11")?.classList.contains("strikethrough")) {
+    numFoxes++;
+  }
+  const total = brownPoints[crossed];
+  document.getElementById("brownpoints").innerHTML = total.toString();
   return total;
 }
 
 // --- Scoring for Pink Area (formerly Purple in original) ---
 function calcPink() {
   let total = 0;
-  for (let i = 1; i <= 12; i++) {
-    const id = "p" + i;
-    const ele = document.getElementById(id);
-    if (ele) {
-      const numberVal = parseInt(ele.dataset.value || "0"); // Assuming entered value is stored in data-value
-      if (Number.isInteger(numberVal) && numberVal > 0) {
-        total += numberVal;
-      }
-      // Fox: If p8 has a value (fox icon is under p8).
-      if (i === 8 && Number.isInteger(numberVal) && numberVal > 0) {
+  const pinkSquares = document.querySelectorAll(".pink-row .long-boxes .square");
+  pinkSquares.forEach((ele, index) => {
+    const numberVal = parseInt(ele.dataset.value || "0");
+    if (Number.isInteger(numberVal) && numberVal > 0) {
+      total += numberVal;
+      if (index === 8) {
         numFoxes++;
       }
     }
-  }
+  });
   document.getElementById("pinkpoints").innerHTML = total.toString();
   return total;
 }
@@ -274,6 +245,77 @@ function circle(element) {
 }
 
 function numberbox(element, multipl = 1) {
+  if (element.id && element.id.startsWith("g")) {
+    strikethrough(element);
+    return;
+  }
+
+  const pinkPickerRow = document.getElementById("pink-picker-row");
+  if (pinkPickerRow) pinkPickerRow.style.display = element.id && element.id.startsWith("pink") ? "flex" : "none";
+
+  if (element.id && element.id.startsWith("p") && !element.id.startsWith("pink")) {
+    const index = Number(element.id.substring(1));
+    const isLeft = index <= 6;
+    let adjacentValue = isLeft ? 6 : 8;
+
+    if (isLeft) {
+      for (let i = 1; i <= 6; i++) {
+        const box = document.getElementById("p" + i);
+        if (box && box.dataset.value) {
+          adjacentValue = Number(box.dataset.value) - 1;
+          break;
+        }
+      }
+    } else {
+      for (let i = 12; i >= 7; i--) {
+        const box = document.getElementById("p" + i);
+        if (box && box.dataset.value) {
+          adjacentValue = Number(box.dataset.value) + 1;
+          break;
+        }
+      }
+    }
+
+    if (element.dataset.originalText === undefined) {
+      element.dataset.originalText = element.innerHTML;
+    }
+    selected = element;
+    document.getElementById("mainmodal").style.display = "flex";
+    document.getElementById("modal-extra-rows").style.display = "none";
+
+    for (let i = 1; i <= 12; i++) {
+      const pickerBox = document.getElementById("sq" + i);
+      pickerBox.style.display = "none";
+    }
+    document.getElementById("sq1").innerHTML = "7";
+    document.getElementById("sq2").innerHTML = adjacentValue.toString();
+    document.getElementById("sq1").style.display = "block";
+    document.getElementById("sq2").style.display = (adjacentValue >= 2 && adjacentValue <= 12) ? "block" : "none";
+    return;
+  }
+
+  if (element.id && element.id.startsWith("pink")) {
+    multiplier = multipl;
+    if (element.dataset.originalText === undefined) {
+      element.dataset.originalText = element.innerHTML;
+    }
+    selected = element;
+    document.getElementById("mainmodal").style.display = "flex";
+    document.getElementById("modal-extra-rows").style.display = "none";
+
+    const pinkOptions = multipl === 2 ? [2, 4, 6, 8, 12] : [1, 2, 3, 4, 5, 6].map(value => value * multipl);
+    for (let i = 1; i <= 12; i++) {
+      const pickerBox = document.getElementById("sq" + i);
+      pickerBox.style.display = "none";
+    }
+    pinkOptions.forEach((value, index) => {
+      const pickerBox = document.getElementById("sq" + (index + 1));
+      pickerBox.innerHTML = value.toString();
+      pickerBox.style.display = "block";
+    });
+    return;
+  }
+
   multiplier = multipl;
   // Store original text if not already stored
   if (element.dataset.originalText === undefined) {
@@ -338,7 +380,7 @@ function hideScore(element) {
   // This function seems to be attached to the parent of all score displays.
   // It should toggle visibility for all individual score elements.
   const scoreElements = [
-    "greypoints", "yellowpoints", "bluepoints", "greenpoints", "pinkpoints",
+    "yellowpoints", "tealpoints", "purplepoints", "brownpoints", "pinkpoints",
     "foxpoints", "totalScore"
   ];
   scoreElements.forEach(id => {
@@ -368,5 +410,4 @@ window.onclick = function(event) {
   }
 }
 
-// Initial score update on load, if needed (or call when game starts)
-// updateScore(); 
+updateScore();

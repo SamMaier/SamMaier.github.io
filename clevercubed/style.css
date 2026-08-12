@@ -617,16 +617,18 @@ div {
 .purple-row .track-index { display: none; }
 .brown-row .score-marker .tinypoints.brownpoints { background: #c39753; color: #fff; }
 .brown-row .long-boxes .score-marker {
-  flex-direction: column-reverse;
   gap: 0;
-  height: 2rem;
-  flex-basis: 2rem;
+  height: 1.45rem;
+  flex-basis: 1.45rem;
 }
 .brown-row .long-boxes .score-marker .tinypoints {
-  flex: 0 0 1.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  line-height: 1.25rem;
+  flex: 0 0 .9rem;
+  width: .9rem;
+  height: .9rem;
+  line-height: .9rem;
+}
+.brown-row .long-boxes .score-marker .pointsnumber {
+  font-size: .55rem;
 }
 .pink-row .score-marker .tinypoints.pinkpoints { background: #e91e63; color: #fff; }
 .pink-row .track-index { display: none; }
@@ -746,6 +748,14 @@ div {
   .grid-yellow, .grid-blue { min-height: 13.5rem; }
   .long-track { padding-left: .2rem; padding-right: .2rem; }
   .long-boxes .column { flex-basis: 1.45rem; }
+  .brown-row .long-boxes .score-marker .tinypoints {
+    flex-basis: .75rem;
+    width: .75rem;
+    height: .75rem;
+    line-height: .75rem;
+  }
+  .brown-row .long-boxes .score-marker .pointsnumber { font-size: .48rem; }
+  .brown-row .long-boxes .score-marker .track-index { font-size: .55rem; }
   .purple-sign { flex-basis: .45rem; font-size: 1rem; }
   .purple-center { flex-basis: 1.85rem; }
   .purple-seven { width: 1.75rem; height: 1.75rem; line-height: 1.55rem; }

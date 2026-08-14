@@ -306,7 +306,7 @@ div {
   overflow: hidden;
   border: .2rem solid #eee;
   border-radius: .9rem;
-  padding: .45rem .45rem .3rem;
+  padding: .45rem .1rem .3rem;
 }
 
 .grid-row { gap: .25rem; }
@@ -358,14 +358,14 @@ div {
 
 .grid-yellow .score-stars .tinypoints,
 .grid-blue .score-stars .tinypoints {
-  width: 1.05rem;
-  height: 1.05rem;
-  line-height: 1.05rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  line-height: 1.3rem;
 }
 
 .grid-yellow .score-stars .tinypoints .pointsnumber,
 .grid-blue .score-stars .tinypoints .pointsnumber {
-  font-size: .65rem;
+  font-size: .75rem;
 }
 
 .grid-yellow .score-stars .track-index,
@@ -447,7 +447,7 @@ div {
 }
 
 .grid-blue .bottom-bonuses {
-  width: auto;
+  width: calc(100% - 1.75rem);
   row-gap: 0;
 }
 
@@ -463,8 +463,8 @@ div {
 .long-track {
   width: 100%;
   min-height: 5.4rem;
-  padding: .35rem .45rem 1.8rem;
-  margin-top: .3rem;
+  padding: .2rem .45rem 1.8rem;
+  margin-top: .2rem;
   overflow: visible;
 }
 
@@ -502,16 +502,16 @@ div {
 .score-marker .track-index { font-size: .7rem; }
 
 .tinypoints {
-  width: 1.25rem;
-  height: 1.25rem;
-  line-height: 1.25rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  line-height: 1.3rem;
   position: relative;
   text-align: center;
   filter: drop-shadow(0 0 1px #fff);
   clip-path: polygon(50% 0,59% 12%,70% 5%,75% 18%,88% 14%,86% 28%,100% 34%,89% 45%,98% 56%,84% 61%,87% 76%,73% 72%,67% 88%,57% 78%,47% 100%,39% 84%,25% 91%,24% 76%,10% 79%,15% 64%,0 57%,12% 47%,2% 36%,16% 29%,14% 14%,29% 19%,36% 5%,45% 13%);
 }
 
-.tinypoints .pointsnumber { font-size: .7rem; }
+.tinypoints .pointsnumber { font-size: .75rem; }
 .score-marker .tinypoints { margin: auto; }
 
 .below,
@@ -573,9 +573,18 @@ div {
   top: 2.95rem;
 }
 
+.purple-row .long-boxes .foxbelow,
+.pink-row .long-boxes .foxbelow {
+  z-index: 4;
+}
+
 .purple-row .long-boxes { margin-left: -.2rem; margin-right: -.2rem; }
 .purple-row .long-boxes .column { flex-basis: 1.6rem; }
-.brown-row .long-track { padding-bottom: .9rem; }
+.brown-row .long-track {
+  min-height: 4.6rem;
+  padding-bottom: .2rem;
+}
+.brown-row .long-boxes { margin-top: .5rem; }
 .pink-row .long-track { padding-bottom: 1.3rem; }
 
 .brown-bonus-slot {
@@ -634,22 +643,39 @@ div {
   margin-top: 1.25rem;
 }
 
-.purple-reroll {
+.purple-bonus-row {
   position: absolute;
   top: 3.25rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 1.4rem;
-  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: .15rem;
+  z-index: 5;
+}
+
+.purple-bonus-rule {
+  min-width: 2.25rem;
+  height: 1.2rem;
+  padding: 0 .15rem;
   line-height: 1.2rem;
-  border: .12rem solid #fff;
-  border-radius: 50%;
-  background: #32227f;
-  color: #fff;
+  border-radius: .25rem;
+  background: #fff;
+  color: #32227f;
   text-align: center;
   font-family: sans-serif;
-  font-size: .9rem;
-  z-index: 5;
+  font-size: .62rem;
+  white-space: nowrap;
+}
+
+.purple-bonus-row .purplepoints {
+  flex: 0 0 1.3rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin: 0;
+  line-height: 1.3rem;
+  background: #4b3cae;
+  color: #fff;
 }
 
 .purple-row .score-marker .tinypoints.purplepoints { background: #4b3cae; color: #fff; }
@@ -661,13 +687,13 @@ div {
   flex-basis: 1.45rem;
 }
 .brown-row .long-boxes .score-marker .tinypoints {
-  flex: 0 0 .9rem;
-  width: .9rem;
-  height: .9rem;
-  line-height: .9rem;
+  flex: 0 0 1.3rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  line-height: 1.3rem;
 }
 .brown-row .long-boxes .score-marker .pointsnumber {
-  font-size: .55rem;
+  font-size: .75rem;
 }
 .pink-row .score-marker .tinypoints.pinkpoints { background: #e91e63; color: #fff; }
 .pink-row .track-index { display: none; }
@@ -775,7 +801,7 @@ div {
   background: #0008;
 }
 
-.modal-spacer { flex-grow: 1; }
+.modal-spacer { flex-grow: 1; max-height: 25rem; }
 .picker-row { display: flex; justify-content: center; }
 .picker-row .bigsquare { margin: .2rem; }
 .hiddenscore { font-size: .001rem; }
@@ -792,18 +818,19 @@ div {
   .square { width: 1.75rem; height: 1.75rem; line-height: 1.75rem; font-size: 1.2rem; }
   .grid-yellow .grid-row-cells .square,
   .grid-blue .grid-row-cells .square { flex-basis: 1.75rem; width: 1.75rem; }
-  .grid-blue .grid-row-cells,
-  .grid-blue .bottom-bonuses { grid-template-columns: repeat(6, 1.75rem); }
+  .grid-blue .grid-row-cells { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .grid-blue .grid-row-cells .square { flex-basis: auto; width: auto; }
+  .grid-blue .bottom-bonuses { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .grid-yellow, .grid-blue { min-height: 13.5rem; }
   .long-track { padding-left: .2rem; padding-right: .2rem; }
   .long-boxes .column { flex-basis: 1.45rem; }
   .brown-row .long-boxes .score-marker .tinypoints {
-    flex-basis: .75rem;
-    width: .75rem;
-    height: .75rem;
-    line-height: .75rem;
+    flex-basis: 1.3rem;
+    width: 1.3rem;
+    height: 1.3rem;
+    line-height: 1.3rem;
   }
-  .brown-row .long-boxes .score-marker .pointsnumber { font-size: .48rem; }
+  .brown-row .long-boxes .score-marker .pointsnumber { font-size: .75rem; }
   .brown-row .long-boxes .score-marker .track-index { font-size: .55rem; }
   .purple-sign { flex-basis: .45rem; font-size: 2rem; }
   .purple-center { flex-basis: 1.85rem; }

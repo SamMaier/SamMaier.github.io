@@ -74,7 +74,7 @@ These mappings are the intended contents/locations from `endgoal.png`. Keep them
 
 ### Pink area
 
-- Score markers: `x1, x2, x2, x1, x2, x2, x1, x3, x2, x2, x2, x3`, with the visible track indices `1` through `12`.
+- Score markers: `blank, x1, x2, x2, x1, x2, x2, x1, x3, x2, x2, x3`, with the visible track indices `1` through `12`.
 - All twelve main boxes contain `½`.
 - Bonuses, left to right: black `?`, black reroll, teal/blue `?`, black `+1`, black dice, yellow `?`, brown `?`, black reroll, fox, purple `?`, teal `?`, black `?`.
 - Score markers, half-point boxes, and bonuses should share columns and remain fully inside the pink track. Do not add a start arrow.

@@ -21,7 +21,10 @@ function calcSilver() {
     total += yellowPointsPerRow[markedInRow];
   }
 
-  if (document.getElementById("s6")?.classList.contains("strikethrough")) {
+  const yellowFoxUnlocked =
+    document.getElementById("s6")?.classList.contains("strikethrough") &&
+    document.getElementById("s12")?.classList.contains("strikethrough");
+  if (yellowFoxUnlocked) {
     numFoxes++;
   }
 
@@ -44,7 +47,10 @@ function calcYellow() {
     total += turquoisePointsPerRow[markedInRow];
   }
 
-  if (document.getElementById("b6")?.classList.contains("strikethrough")) {
+  const blueFoxUnlocked = Array.from({length: 6}, (_, index) =>
+    document.getElementById("b" + (index + 1))?.classList.contains("strikethrough")
+  ).every(Boolean);
+  if (blueFoxUnlocked) {
     numFoxes++;
   }
   document.getElementById("tealpoints").innerHTML = total.toString();
@@ -90,7 +96,10 @@ function calcGreen() {
     }
   }
 
-  if (document.getElementById("g11")?.classList.contains("strikethrough")) {
+  const brownFoxUnlocked = ["g11", "g12"].every(id =>
+    document.getElementById(id)?.classList.contains("strikethrough")
+  );
+  if (brownFoxUnlocked) {
     numFoxes++;
   }
   const total = brownPoints[crossed];
@@ -106,7 +115,7 @@ function calcPink() {
     const numberVal = parseInt(ele.dataset.value || "0");
     if (Number.isInteger(numberVal) && numberVal > 0) {
       total += numberVal;
-      if (index === 8) {
+      if (index === 8 && ele.dataset.pinkPickerSource === "bottom") {
         numFoxes++;
       }
     }
@@ -185,9 +194,13 @@ function numberpicked(elementFromModal) {
     selected.innerHTML = selected.dataset.originalText || ""; // Restore original text (like x2, >=3)
     selected.style.color = selected.id.startsWith("pink") ? "" : "inherit";
     delete selected.dataset.value; // Clear stored value
+    delete selected.dataset.pinkPickerSource;
   } else {
     const numericValue = parseInt(pickedValue);
     selected.dataset.value = numericValue; // Store the actual numeric value
+    if (selected.id.startsWith("pink")) {
+      selected.dataset.pinkPickerSource = elementFromModal.id.startsWith("pink-sq") ? "bottom" : "regular";
+    }
 
     // Display the number in the box
     selected.innerHTML = numericValue;

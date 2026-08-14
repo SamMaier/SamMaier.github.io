@@ -5,7 +5,14 @@
     thatsprettyclever: {
       trigger: '.scorecard > .row:first-child > .surroundingbox:first-child .bigsquare',
       areas: ['.yellowshadow', '.blueshadow', '.greenshadow', '.orangeshadow', '.purpleshadow'],
-      defaults: ['#999955', '#222299', '#337733', '#bb6600', '#440099']
+      defaults: ['#999955', '#222299', '#337733', '#bb6600', '#440099'],
+      matches: [
+        { fill: '.yellowpoints, .yellowstrike', text: '', fox: 'foxy' },
+        { fill: '.bluepoints, .bonusbox[style*="background-color: #00f"]', text: '.blueshadow .row[style*="color: #00f"] .square', fox: 'foxb' },
+        { fill: '.greenpoints, .bonusbox[style*="background-color: #0a0"]', text: '.greenshadow .square', fox: 'foxg' },
+        { fill: '.orangepoints, .bonusbox[style*="background-color: #f60"]', text: '.orangeshadow .square', fox: 'foxo', baseFox: true },
+        { fill: '.purplepoints, .bonusbox[style*="background-color: #409"]', text: '', fox: 'foxp' }
+      ]
     },
     twiceasclever: {
       trigger: '.dice-field .surroundingbox:first-child .bigsquare',
@@ -16,12 +23,26 @@
         '.greenshadow',
         '.pinkshadow'
       ],
-      defaults: ['#888888', '#999955', '#222299', '#337733', '#ff85c2']
+      defaults: ['#888888', '#999955', '#222299', '#337733', '#ff85c2'],
+      matches: [
+        { fill: '.greypoints, .greybonus', text: '', fox: 'foxs', baseFox: true },
+        { fill: '.yellowpoints, .yellowbonus, .yellowstrike', text: '.yellowshadow .square, .text-yellow-content', fox: 'foxy' },
+        { fill: '.bluepoints, .bluebonus', text: '.blueshadow .square, .text-blue-content', fox: 'foxb' },
+        { fill: '.greenpoints, .greenbonus', text: '.greenshadow .square, .text-green-content', fox: 'foxg' },
+        { fill: '.pinkpoints, .pinkbonus', text: '.pinkshadow .square, .text-pink-content', fox: 'foxp' }
+      ]
     },
     clevercubed: {
       trigger: '.dice-field .surroundingbox:first-child .bigsquare',
       areas: ['.grid-yellow', '.grid-blue', '.purple-row .area', '.brown-row .area', '.pink-row .area'],
-      defaults: ['#f3c900', '#52bec2', '#440099', '#b07a34', '#ff85c2']
+      defaults: ['#f3c900', '#52bec2', '#440099', '#b07a34', '#ff85c2'],
+      matches: [
+        { fill: '.yellowpoints, .yellowbonus', text: '.yellow-lines .grid-row-cells .square', fox: 'foxs', baseFox: true },
+        { fill: '.tealpoints, .bluepoints, .tealbonus, .bluebonus', text: '.blue-grid-rows .square', fox: 'foxy' },
+        { fill: '.purplepoints, .purplebonus, .purple-seven, .purple-reroll', text: '', fox: 'foxb' },
+        { fill: '.brownpoints, .brownbonus', text: '.brown-row .long-boxes .square', fox: 'foxg' },
+        { fill: '.pinkpoints, .pinkbonus', text: '.pink-row .long-boxes .square', fox: 'foxp' }
+      ]
     }
   };
 
@@ -79,8 +100,61 @@
       'color-mix(in srgb, ' + color + ', black 58%) 100%)';
   }
 
+  function contrastColor(color) {
+    var red = parseInt(color.slice(1, 3), 16);
+    var green = parseInt(color.slice(3, 5), 16);
+    var blue = parseInt(color.slice(5, 7), 16);
+    return ((red * 299 + green * 587 + blue * 114) / 1000) > 150 ? '#111111' : '#ffffff';
+  }
+
+  function installColorMatches() {
+    var rules = '';
+    document.body.classList.add('recolor-game-' + gameKey);
+
+    config.matches.forEach(function (match, index) {
+      if (match.fill) {
+        document.querySelectorAll(match.fill).forEach(function (element) {
+          element.classList.add('recolor-match-fill-' + index);
+          if (element.classList.contains('points') || element.classList.contains('tinypoints')) {
+            element.classList.add('recolor-match-pseudo-' + index);
+          }
+        });
+      }
+      if (match.text) {
+        document.querySelectorAll(match.text).forEach(function (element) {
+          element.classList.add('recolor-match-text-' + index);
+        });
+      }
+
+      var scope = 'body.recolor-game-' + gameKey + '.recolor-changed-' + index;
+      rules += scope + ' .recolor-match-fill-' + index +
+        '{background-color:var(--recolor-color-' + index + ')!important;color:var(--recolor-contrast-' + index + ')!important;}';
+      rules += scope + ' .recolor-match-pseudo-' + index + '::before' +
+        '{background-color:var(--recolor-color-' + index + ')!important;}';
+      rules += scope + ' .recolor-match-text-' + index +
+        '{color:var(--recolor-color-' + index + ')!important;}';
+      rules += scope + ' .fox.' + match.fox + ',' + scope + ' .fox.' + match.fox + '::before' +
+        '{background-color:var(--recolor-color-' + index + ')!important;color:var(--recolor-contrast-' + index + ')!important;}';
+      if (match.baseFox) {
+        var dynamicFoxClasses = ':not(.foxs):not(.foxy):not(.foxb):not(.foxg):not(.foxp):not(.foxo)';
+        rules += scope + ' .fox' + dynamicFoxClasses + ',' + scope + ' .fox' + dynamicFoxClasses + '::before' +
+          '{background-color:var(--recolor-color-' + index + ')!important;color:var(--recolor-contrast-' + index + ')!important;}';
+      }
+    });
+
+    var style = document.createElement('style');
+    style.id = 'recolor-match-styles';
+    style.textContent = rules;
+    document.head.appendChild(style);
+  }
+
   function applyColor(index) {
-    if (colors[index].toLowerCase() === config.defaults[index].toLowerCase()) {
+    var isDefault = colors[index].toLowerCase() === config.defaults[index].toLowerCase();
+    document.documentElement.style.setProperty('--recolor-color-' + index, colors[index]);
+    document.documentElement.style.setProperty('--recolor-contrast-' + index, contrastColor(colors[index]));
+    document.body.classList.toggle('recolor-changed-' + index, !isDefault);
+
+    if (isDefault) {
       boardAreas[index].style.removeProperty('background');
       boardAreas[index].style.removeProperty('background-image');
     } else {
@@ -91,6 +165,8 @@
   function saveColors() {
     try { localStorage.setItem(storageKey, JSON.stringify(colors)); } catch (error) {}
   }
+
+  installColorMatches();
 
   var modal = document.createElement('div');
   modal.className = 'recolor-modal';
@@ -198,10 +274,7 @@
   backButton.addEventListener('click', showBoard);
   modal.querySelector('.recolor-reset').addEventListener('click', function () {
     colors = config.defaults.slice();
-    boardAreas.forEach(function (area) {
-      area.style.removeProperty('background');
-      area.style.removeProperty('background-image');
-    });
+    colors.forEach(function (color, index) { applyColor(index); });
     try { localStorage.removeItem(storageKey); } catch (error) {}
     refreshMiniBoard();
   });

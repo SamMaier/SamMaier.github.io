@@ -183,7 +183,7 @@ function numberpicked(elementFromModal) {
 
   if (pickedValue.length === 0) { // Clear box
     selected.innerHTML = selected.dataset.originalText || ""; // Restore original text (like x2, >=3)
-    selected.style.color = "inherit";
+    selected.style.color = selected.id.startsWith("pink") ? "" : "inherit";
     delete selected.dataset.value; // Clear stored value
   } else {
     const numericValue = parseInt(pickedValue);
@@ -252,6 +252,11 @@ function numberbox(element, multipl = 1) {
 
   const pinkPickerRow = document.getElementById("pink-picker-row");
   if (pinkPickerRow) pinkPickerRow.style.display = element.id && element.id.startsWith("pink") ? "flex" : "none";
+  if (!element.id || !element.id.startsWith("pink")) {
+    document.getElementById("picker-row-1").style.display = "flex";
+    document.getElementById("picker-row-2").style.display = "flex";
+    document.getElementById("picker-blank-row").style.display = "flex";
+  }
 
   if (element.id && element.id.startsWith("p") && !element.id.startsWith("pink")) {
     const index = Number(element.id.substring(1));
@@ -303,16 +308,24 @@ function numberbox(element, multipl = 1) {
     document.getElementById("mainmodal").style.display = "flex";
     document.getElementById("modal-extra-rows").style.display = "none";
 
-    const pinkOptions = multipl === 2 ? [2, 4, 6, 8, 12] : [1, 2, 3, 4, 5, 6].map(value => value * multipl);
+    const isFirstPinkBox = element.id === "pink1";
+    document.getElementById("picker-row-1").style.display = isFirstPinkBox ? "none" : "flex";
+    document.getElementById("picker-row-2").style.display = isFirstPinkBox ? "none" : "flex";
+    document.getElementById("picker-blank-row").style.display = "flex";
+
+    const pinkOptions = [1, 2, 3, 4, 5, 6].map(value => value * multipl);
     for (let i = 1; i <= 12; i++) {
       const pickerBox = document.getElementById("sq" + i);
       pickerBox.style.display = "none";
     }
-    pinkOptions.forEach((value, index) => {
-      const pickerBox = document.getElementById("sq" + (index + 1));
-      pickerBox.innerHTML = value.toString();
-      pickerBox.style.display = "block";
-    });
+    if (!isFirstPinkBox) {
+      pinkOptions.forEach((value, index) => {
+        const pickerBox = document.getElementById("sq" + (index + 1));
+        pickerBox.innerHTML = value.toString();
+        pickerBox.style.display = "block";
+      });
+    }
+    document.getElementById("pink-picker-row").style.display = "flex";
     return;
   }
 

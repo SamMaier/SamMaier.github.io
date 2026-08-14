@@ -1,0 +1,149 @@
+.recolor-trigger {
+  cursor: pointer;
+  position: relative;
+  background: conic-gradient(
+    from 12deg,
+    #f44336 0deg 52deg,
+    #ff9800 52deg 104deg,
+    #ffeb3b 104deg 156deg,
+    #4caf50 156deg 208deg,
+    #00bcd4 208deg 260deg,
+    #3f51b5 260deg 312deg,
+    #9c27b0 312deg 360deg
+  );
+}
+
+.recolor-trigger:focus-visible {
+  outline: .18rem solid #fff;
+  outline-offset: .12rem;
+}
+
+.recolor-modal {
+  position: fixed;
+  z-index: 100000;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, .76);
+  font-family: Arial, sans-serif;
+}
+
+.recolor-modal.is-open { display: flex; }
+
+.recolor-panel {
+  width: min(23rem, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 1.5rem);
+  overflow: auto;
+  padding: .9rem;
+  border: .15rem solid #fff;
+  border-radius: .8rem;
+  background: #171717;
+  color: #fff;
+  box-shadow: 0 .8rem 2.4rem #000b;
+}
+
+.recolor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.25rem;
+  margin-bottom: .75rem;
+}
+
+.recolor-title {
+  margin: 0;
+  font: 700 1.15rem/1 Arial, sans-serif;
+}
+
+.recolor-icon-button,
+.recolor-reset {
+  min-height: 2.25rem;
+  border: .1rem solid #777;
+  border-radius: .45rem;
+  background: #292929;
+  color: #fff;
+  font: 700 .9rem/1 Arial, sans-serif;
+  cursor: pointer;
+}
+
+.recolor-icon-button {
+  min-width: 2.25rem;
+  padding: 0 .6rem;
+  font-size: 1.25rem;
+}
+
+.recolor-back { visibility: hidden; }
+.recolor-modal.is-picking .recolor-back { visibility: visible; }
+
+.recolor-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .45rem;
+}
+
+.recolor-area {
+  appearance: none;
+  width: 100%;
+  aspect-ratio: 1.05;
+  border: .16rem solid #eee;
+  border-radius: .55rem;
+  cursor: pointer;
+  box-shadow: inset 0 0 1rem #0006;
+}
+
+.recolor-area:nth-child(n + 3) {
+  grid-column: 1 / -1;
+  height: 4rem;
+  aspect-ratio: auto;
+}
+
+.recolor-area:focus-visible,
+.recolor-swatch:focus-visible,
+.recolor-icon-button:focus-visible,
+.recolor-reset:focus-visible {
+  outline: .2rem solid #fff;
+  outline-offset: .12rem;
+}
+
+.recolor-palette {
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .55rem;
+}
+
+.recolor-modal.is-picking .recolor-board,
+.recolor-modal.is-picking .recolor-reset { display: none; }
+.recolor-modal.is-picking .recolor-palette { display: grid; }
+
+.recolor-swatch {
+  appearance: none;
+  width: 100%;
+  aspect-ratio: 1;
+  border: .15rem solid #eee;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: inset 0 0 .65rem #0005;
+}
+
+.recolor-swatch.is-selected::after {
+  content: '\2713';
+  display: block;
+  color: #fff;
+  font: 900 1.25rem/1 Arial, sans-serif;
+  text-shadow: 0 1px 3px #000, 0 0 3px #000;
+}
+
+.recolor-reset {
+  width: 100%;
+  margin-top: .75rem;
+}
+
+body.recolor-open { overflow: hidden; }
+
+@media (max-height: 35rem) {
+  .recolor-panel { width: min(20rem, calc(100vw - 1rem)); }
+  .recolor-area { aspect-ratio: 1.6; }
+  .recolor-area:nth-child(n + 3) { height: 2.5rem; }
+}

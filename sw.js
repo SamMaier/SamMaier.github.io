@@ -1,6 +1,8 @@
-const CACHE_NAME = 'sam-maier-games-v1';
+// Change this when the deployed assets change. Old caches are removed during
+// activation, so returning visitors receive the current files automatically.
+const CACHE_NAME = 'sam-maier-games-v6';
 const PRECACHE_URLS = [
-  './', './index.html', './manifest.webmanifest', './icon.svg', './offline.js', './marck-script-v22-latin-regular.woff2',
+  './', './index.html', './manifest.webmanifest', './icon.svg', './offline.js', './recolor.css', './recolor.js', './marck-script-v22-latin-regular.woff2',
   './twiceasclever/index.html', './twiceasclever/style.css', './twiceasclever/app.js',
   './thatsprettyclever/index.html', './thatsprettyclever/style.css', './thatsprettyclever/app.js',
   './clevercubed/index.html', './clevercubed/style.css', './clevercubed/app.js',
@@ -17,12 +19,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
-  event.respondWith(caches.match(event.request).then((cachedResponse) => {
-    if (cachedResponse) return cachedResponse;
-    return fetch(event.request).then((networkResponse) => {
-      const copy = networkResponse.clone();
-      caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-      return networkResponse;
-    });
-  }));
+  // Network-first keeps published changes visible while retaining offline use.
+  event.respondWith(fetch(event.request).then((networkResponse) => {
+    const copy = networkResponse.clone();
+    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+    return networkResponse;
+  }).catch(() => caches.match(event.request)));
 });

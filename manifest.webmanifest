@@ -1,6 +1,6 @@
 {
-  "name": "Sam Maier Games",
-  "short_name": "Games",
+  "name": "Sam's Games",
+  "short_name": "Sam's Games",
   "description": "Offline score sheets and game utilities.",
   "start_url": "./index.html",
   "scope": "./",

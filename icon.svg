@@ -1,6 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#000"/>
-  <path d="M256 52 460 256 256 460 52 256Z" fill="#f5c820"/>
-  <path d="M256 112 400 256 256 400 112 256Z" fill="#000"/>
-  <text x="256" y="302" fill="#fff" font-family="sans-serif" font-size="150" font-weight="700" text-anchor="middle">G</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Geometric fox</title>
+  <desc id="desc">A geometric orange fox head on a deep blue background.</desc>
+  <rect width="512" height="512" rx="112" fill="#101827"/>
+
+  <!-- angular ears and head silhouette -->
+  <path d="M92 102 224 166 256 148 288 166 420 102 397 306 337 390 256 438 175 390 115 306Z" fill="#e85d2a"/>
+  <path d="M92 102 224 166 176 254 115 306Z" fill="#f28a31"/>
+  <path d="m420 102-132 64 48 88 61 52Z" fill="#c94327"/>
+
+  <!-- forehead planes -->
+  <path d="m224 166 32-18 32 18-32 139Z" fill="#ffb13b"/>
+  <path d="m256 148 32 18-32 139Z" fill="#f0792e"/>
+
+  <!-- muzzle -->
+  <path d="m115 306 141-51 141 51-60 84-81 48-81-48Z" fill="#f6d7ad"/>
+  <path d="m256 255 141 51-60 84-81 48Z" fill="#e9b77e"/>
+
+  <!-- eyes -->
+  <path d="m145 242 76 12-48 39-28-17Z" fill="#101827"/>
+  <path d="m367 242-76 12 48 39 28-17Z" fill="#101827"/>
+  <path d="m181 259 21 3-16 13Z" fill="#fff4dc"/>
+  <path d="m331 259-21 3 16 13Z" fill="#fff4dc"/>
+
+  <!-- nose and mouth -->
+  <path d="m231 327 25-14 25 14-25 25Z" fill="#101827"/>
+  <path d="m256 352v24l-34-19m34-5v24l34-19" fill="none" stroke="#101827" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

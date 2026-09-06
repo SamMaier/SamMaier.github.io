@@ -32,6 +32,18 @@
         { fill: '.pinkpoints, .pinkbonus', text: '.pinkshadow .square, .text-pink-content', fox: 'foxp' }
       ]
     },
+    clever4ever: {
+      trigger: '.dice-field .surroundingbox:first-child .bigsquare',
+      areas: ['.yellow-area', '.blue-area', '.grey-area', '.green-area', '.pink-area'],
+      defaults: ['#f3c900', '#28aee4', '#888888', '#70bd18', '#ff73ad'],
+      matches: [
+        { fill: '.yellowpoints, .yellowbonus', text: '', fox: 'foxy' },
+        { fill: '.bluepoints, .bluebonus', text: '', fox: 'foxb' },
+        { fill: '.greypoints, .greybonus', text: '', fox: 'foxs', baseFox: true },
+        { fill: '.greenpoints, .greenbonus', text: '', fox: 'foxg' },
+        { fill: '.pinkpoints, .pinkbonus', text: '', fox: 'foxp' }
+      ]
+    },
     clevercubed: {
       trigger: '.dice-field .surroundingbox:first-child .bigsquare',
       areas: ['.grid-yellow', '.grid-blue', '.purple-row .area', '.brown-row .area', '.pink-row .area'],

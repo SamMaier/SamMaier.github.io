@@ -1,11 +1,12 @@
 // Change this when the deployed assets change. Old caches are removed during
 // activation, so returning visitors receive the current files automatically.
-const CACHE_NAME = 'sam-maier-games-v9';
+const CACHE_NAME = 'sam-games-v11';
 const PRECACHE_URLS = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './offline.js', './recolor.css', './recolor.js', './marck-script-v22-latin-regular.woff2',
   './twiceasclever/index.html', './twiceasclever/style.css', './twiceasclever/app.js',
   './thatsprettyclever/index.html', './thatsprettyclever/style.css', './thatsprettyclever/app.js',
   './clevercubed/index.html', './clevercubed/style.css', './clevercubed/app.js',
+  './clever4ever/index.html', './clever4ever/style.css', './clever4ever/app.js',
   './euchre/index.html', './euchre/style.css', './euchre/app.js',
   './pickleball/index.html', './pickleball/style.css', './pickleball/app.js'
 ];
